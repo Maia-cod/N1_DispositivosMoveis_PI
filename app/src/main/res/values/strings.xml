@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BarberAgenda</string>
+
+    <string name="tela_agenda">Agenda</string>
+    <string name="tela_novo_agendamento">Novo agendamento</string>
+    <string name="tela_detalhe">Detalhe do agendamento</string>
+
+    <string name="campo_login">Login</string>
+    <string name="campo_senha">Senha</string>
+    <string name="botao_entrar">Entrar</string>
+    <string name="erro_login_vazio">Informe o login</string>
+    <string name="erro_senha_vazia">Informe a senha</string>
+    <string name="erro_login_invalido">Login ou senha incorretos</string>
+    <string name="dica_credenciais">Dono: carlos / 123 — Cliente: ana / 123</string>
+
+    <string name="botao_novo_agendamento">Novo agendamento</string>
+    <string name="botao_sair">Sair</string>
+    <string name="lista_vazia">Nenhum agendamento encontrado.</string>
+    <string name="busca_cliente_hint">Buscar por nome do cliente</string>
+    <string name="erro_ao_carregar">Não foi possível carregar a lista.</string>
+
+    <string name="campo_cliente">Nome do cliente</string>
+    <string name="campo_telefone">Telefone</string>
+    <string name="campo_servico">Serviço</string>
+    <string name="campo_data">Data</string>
+    <string name="campo_hora">Hora</string>
+    <string name="campo_observacao">Observação (opcional)</string>
+    <string name="botao_escolher_data">Escolher data</string>
+    <string name="botao_escolher_hora">Escolher hora</string>
+    <string name="botao_salvar">Salvar agendamento</string>
+    <string name="botao_cancelar">Cancelar</string>
+    <string name="data_nao_definida">Data não definida</string>
+    <string name="hora_nao_definida">Hora não definida</string>
+
+    <string name="erro_cliente_vazio">Informe o nome do cliente</string>
+    <string name="erro_telefone_vazio">Informe o telefone</string>
+    <string name="erro_telefone_curto">Telefone deve ter pelo menos 8 dígitos</string>
+    <string name="erro_servico_vazio">Escolha o serviço</string>
+    <string name="erro_data_obrigatoria">Escolha a data do agendamento</string>
+    <string name="erro_hora_obrigatoria">Escolha a hora do agendamento</string>
+    <string name="erro_conflito">Já existe um agendamento neste horário. Escolha outro.</string>
+    <string name="erro_antecedencia">Agendamentos devem ser feitos com pelo menos 1 hora de antecedência.</string>
+    <string name="erro_agendamento_antigo">Esta data e hora já passaram.</string>
+    <string name="erro_salvar">Não foi possível salvar. Tente novamente.</string>
+    <string name="sucesso_agendado">Agendamento salvo com sucesso!</string>
+
+    <string name="rotulo_cliente">Cliente</string>
+    <string name="rotulo_telefone">Telefone</string>
+    <string name="rotulo_servico">Serviço</string>
+    <string name="rotulo_data_hora">Data e hora</string>
+    <string name="rotulo_observacao">Observação</string>
+    <string name="rotulo_status">Status</string>
+    <string name="rotulo_criado_por">Status do agendamento</string>
+
+    <string name="status_confirmado">Confirmado</string>
+    <string name="status_atrasado">ATRASADO</string>
+    <string name="status_cancelado">Cancelado</string>
+    <string name="status_concluido">Concluído</string>
+
+    <string name="botao_cancelar_agendamento">Cancelar agendamento</string>
+    <string name="botao_concluir">Marcar como concluído</string>
+    <string name="erro_cancelamento_prazo">Cancelamento permitido até 2 horas antes do horário.</string>
+    <string name="confirmar_cancelamento">Deseja cancelar este agendamento?</string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="agendamento_cancelado">Agendamento cancelado.</string>
+    <string name="agendamento_concluido">Agendamento concluído.</string>
+    <string name="sem_alteracao">Este agendamento não pode mais ser alterado.</string>
+    <string name="sem_observacao">Sem observações.</string>
+    <string name="sem_alteracao_botao">Este agendamento não pode mais ser alterado.</string>
+
+    <string name="descricao_botao_novo">Criar novo agendamento</string>
+    <string name="descricao_abrir_agendamento">Abrir detalhes do agendamento de %1$s</string>
+
+    <string-array name="servicos">
+        <item>Corte</item>
+        <item>Barba</item>
+        <item>Corte + Barba</item>
+        <item>Escova</item>
+        <item>Platinado</item>
+    </string-array>
+</resources>
