@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<title>Memorial Técnico - Modelagem de Dados e Arquitetura - BarberAgenda</title>
+<style>
+  body { font-family: "Calibri", "Segoe UI", Arial, sans-serif; font-size: 11pt; color: #1c1b1f; line-height: 1.5; }
+  h1 { font-size: 20pt; color: #4f378b; text-align: center; margin-bottom: 4pt; }
+  h2 { font-size: 15pt; color: #4f378b; border-bottom: 2px solid #6750a4; padding-bottom: 3pt; margin-top: 22pt; }
+  h3 { font-size: 12.5pt; color: #00629d; margin-top: 14pt; }
+  .capa { text-align: center; margin-bottom: 6pt; }
+  .capa .inst { font-size: 12pt; }
+  .capa .titulo { font-size: 22pt; font-weight: bold; color: #4f378b; margin-top: 24pt; }
+  .capa .sub { font-size: 14pt; color: #313033; margin-top: 6pt; }
+  .meta { width: 100%; margin-top: 28pt; border-collapse: collapse; }
+  .meta td { border: 1px solid #cac4d0; padding: 7pt 10pt; font-size: 10.5pt; }
+  .meta td.l { background: #f3edf7; font-weight: bold; width: 30%; color: #4f378b; }
+  table.dados { width: 100%; border-collapse: collapse; margin-top: 8pt; }
+  table.dados th { background: #6750a4; color: #fff; padding: 6pt 8pt; font-size: 10.5pt; text-align: left; border: 1px solid #4f378b; }
+  table.dados td { border: 1px solid #cac4d0; padding: 6pt 8pt; font-size: 10.5pt; vertical-align: top; }
+  table.dados tr:nth-child(even) td { background: #faf8ff; }
+  .pk { color: #b3261e; font-weight: bold; }
+  .fk { color: #146c2e; font-weight: bold; }
+  .fig { text-align: center; margin: 10pt 0; }
+  .fig img { width: 620px; border: 1px solid #e0e0e0; border-radius: 6px; }
+  .legenda { text-align: center; font-size: 9.5pt; color: #49454f; font-style: italic; margin-top: 3pt; }
+  .nota { background: #f3edf7; border-left: 5px solid #6750a4; padding: 8pt 12pt; margin: 10pt 0; font-size: 10.5pt; }
+  ul, ol { margin-top: 4pt; }
+  li { margin-bottom: 3pt; }
+  .ok { color: #146c2e; font-weight: bold; }
+  .parcial { color: #b26a00; font-weight: bold; }
+  .falta { color: #b3261e; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <p class="inst"><b>PONTIFÍCIA UNIVERSIDADE CATÓLICA DE GOIÁS</b><br>
+  Escola Politécnica e de Artes<br>
+  Curso Superior de Tecnologia em Análise e Desenvolvimento de Sistemas</p>
+  <p class="titulo">Memorial Técnico<br>Modelagem de Dados e Arquitetura</p>
+  <p class="sub">Aplicação móvel <b>BarberAgenda</b> — Projeto Integrador 2026/2</p>
+</div>
+
+<table class="meta">
+  <tr><td class="l">Projeto</td><td>BarberAgenda — agendamento de serviços em barbearia</td></tr>
+  <tr><td class="l">Etapa</td><td>N1 — primeiro bimestre</td></tr>
+  <tr><td class="l">Artefato</td><td>Modelagem de dados e definição arquitetural, com justificativa da pilha tecnológica (item 2 da N1)</td></tr>
+  <tr><td class="l">Pilha tecnológica</td><td>Android nativo — Java 17, Room (SQLite), Material Design 3, View Binding, RecyclerView, Gradle/KSP</td></tr>
+  <tr><td class="l">Equipe</td><td>(preencher) — coordenador e integrantes com atribuições</td></tr>
+  <tr><td class="l">Repositório</td><td>(inserir endereço do Git)</td></tr>
+  <tr><td class="l">Data</td><td>___/___/______</td></tr>
+</table>
+
+<h2>1. Introdução</h2>
+<p>Este documento apresenta a modelagem de dados e a definição arquitetural da aplicação <b>BarberAgenda</b>, contemplando as entidades do domínio, seus atributos, relacionamentos e regras de integridade, bem como a organização do código em camadas e a justificativa técnica da pilha adotada. O conteúdo atende ao item 2 da composição da N1 (Seção 8.1 do Documento Norteador do Projeto Integrador ADS 2026/2).</p>
+
+<h2>2. Contexto do domínio</h2>
+<p>O BarberAgenda apoia a rotina de uma barbearia, permitindo que o cliente registre um horário e que o barbeiro administre a agenda do dia. O problema central é <b>evitar conflitos de horário</b> e organizar os atendimentos, com controle de acesso por perfil. O domínio foi delimitado com dois usuários identificáveis (dono/barbeiro e cliente) e regras de negócio explícitas (conflito, antecedência mínima e limite de cancelamento).</p>
+<ul>
+  <li><b>Usuário (dono/barbeiro):</b> acessa a agenda, cria/consulta agendamentos, conclui ou cancela qualquer horário.</li>
+  <li><b>Usuário (cliente):</b> registra um agendamento e pode cancelar somente até 2 horas antes do horário.</li>
+</ul>
+
+<h2>3. Modelagem de dados</h2>
+
+<h3>3.1 Entidades</h3>
+<p>O modelo é composto por <b>duas entidades principais</b> relacionadas entre si e sujeitas a validação:</p>
+<ul>
+  <li><b>Usuario</b> — representa quem acessa o aplicativo e define o perfil de permissão.</li>
+  <li><b>Agendamento</b> — representa um atendimento marcado, associado ao usuário que o criou.</li>
+</ul>
+
+<h3>3.2 Diagrama Entidade-Relacionamento</h3>
+<div class="fig">
+  <img src="img/der.png" alt="Diagrama Entidade-Relacionamento do BarberAgenda">
+  <p class="legenda">Figura 1 — Modelo Entidade-Relacionamento (DER) do banco local barberagenda.db.</p>
+</div>
+
+<h3>3.3 Dicionário de dados — entidade Usuario (tabela <i>usuarios</i>)</h3>
+<table class="dados">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrição</th><th>Restrições / regras</th></tr>
+  <tr><td><span class="pk">PK</span> id</td><td>long (INTEGER)</td><td>Identificador único do usuário.</td><td>Chave primária, gerada automaticamente.</td></tr>
+  <tr><td>nome</td><td>String (TEXT)</td><td>Nome de exibição do usuário.</td><td>Preenchido no cadastro/seed.</td></tr>
+  <tr><td>login</td><td>String (TEXT)</td><td>Credencial de acesso.</td><td>Obrigatório; usado na autenticação.</td></tr>
+  <tr><td>senha</td><td>String (TEXT)</td><td>Senha de acesso.</td><td>Obrigatória (valores de demonstração).</td></tr>
+  <tr><td>perfil</td><td>String (TEXT)</td><td>Papel do usuário.</td><td>Valores: <b>DONO</b> ou <b>CLIENTE</b>; controla permissões.</td></tr>
+</table>
+
+<h3>3.4 Dicionário de dados — entidade Agendamento (tabela <i>agendamentos</i>)</h3>
+<table class="dados">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrição</th><th>Restrições / regras</th></tr>
+  <tr><td><span class="pk">PK</span> id</td><td>long (INTEGER)</td><td>Identificador único do agendamento.</td><td>Chave primária, gerada automaticamente.</td></tr>
+  <tr><td>cliente</td><td>String (TEXT)</td><td>Nome do cliente atendido.</td><td>Obrigatório (não vazio).</td></tr>
+  <tr><td>telefone</td><td>String (TEXT)</td><td>Contato do cliente.</td><td>Obrigatório; mínimo de 8 dígitos.</td></tr>
+  <tr><td>servico</td><td>String (TEXT)</td><td>Serviço escolhido (lista fixa).</td><td>Obrigatório.</td></tr>
+  <tr><td>dataHora</td><td>long (INTEGER)</td><td>Data e hora do atendimento.</td><td>Obrigatório; armazenado em <i>epoch milliseconds</i>. Sujeito às regras de antecedência e conflito.</td></tr>
+  <tr><td>observacao</td><td>String (TEXT)</td><td>Observação livre sobre o atendimento.</td><td>Opcional.</td></tr>
+  <tr><td>status</td><td>String (TEXT)</td><td>Situação do agendamento.</td><td>Valores: <b>CONFIRMADO</b>, <b>CANCELADO</b>, <b>CONCLUIDO</b>. Inicia como CONFIRMADO.</td></tr>
+  <tr><td><span class="fk">FK</span> criadoPor</td><td>String (TEXT)</td><td>Login do usuário que criou o agendamento.</td><td>Chave estrangeira lógica para <i>Usuario.login</i>.</td></tr>
+</table>
+
+<h3>3.5 Relacionamento e integridade</h3>
+<p><b>Usuario (1) — realiza — (N) Agendamento.</b> Um usuário pode criar vários agendamentos; cada agendamento é criado por um único usuário. A associação é registrada no campo <i>criadoPor</i>, que armazena o <i>login</i> do usuário autenticado no momento do cadastro. Trata-se de uma <b>chave estrangeira lógica</b>: o Room não impõe restrição de FK física, e a integridade é mantida pela camada de negócio (o login é obtido da sessão ativa).</p>
+<div class="nota"><b>Decisões de modelagem:</b>
+<ul>
+  <li><b>Data/hora em epoch millis (<i>long</i>):</b> simplifica comparações de antecedência e conflito e evita ambiguidade de fuso na persistência.</li>
+  <li><b>Status como texto:</b> legibilidade no banco e no código por meio de constantes; exclusão é lógica (mudança de status), preservando o histórico.</li>
+  <li><b>Sem exclusão física:</b> cancelamento e conclusão alteram o <i>status</i>, mantendo rastreabilidade dos atendimentos.</li>
+</ul>
+</div>
+
+<h3>3.6 Persistência e disponibilidade</h3>
+<ul>
+  <li><b>Room sobre SQLite</b> (<i>barberagenda.db</i>, versão 1): mapeamento objeto-relacional com DAOs anotados (<i>@Insert</i>, <i>@Update</i>, <i>@Query</i>) e entidades anotadas com <i>@Entity</i>.</li>
+  <li><b>Chaves primárias automáticas</b> (<i>autoGenerate = true</i>) em ambas as entidades.</li>
+  <li><b>Consulta reativa:</b> a listagem da agenda é exposta como <i>LiveData&lt;List&lt;Agendamento&gt;&gt;</i>, atualizando a interface automaticamente quando o banco muda.</li>
+  <li><b>Semente de dados (seed):</b> na criação do banco são inseridos dois usuários de demonstração (dono <i>carlos</i> e cliente <i>ana</i>) para permitir a arguição. As credenciais de demonstração são fornecidas via <i>buildConfig</i>, não embutidas no código-fonte Java.</li>
+  <li><b>Offline-first:</b> toda a persistência é local; a aplicação opera sem conectividade, atendendo ao comportamento exigido para ausência de conexão.</li>
+  <li><b>Evolução/migrações:</b> o banco inicia na versão 1; evoluções futuras do esquema serão tratadas com <i>Migration</i> do Room.</li>
+</ul>
+
+<h2>4. Definição arquitetural</h2>
+<div class="fig">
+  <img src="img/arquitetura.png" alt="Arquitetura em camadas do BarberAgenda">
+  <p class="legenda">Figura 2 — Arquitetura em camadas: Apresentação → Negócio → Dados → Persistência.</p>
+</div>
+
+<h3>4.1 Camadas e responsabilidades</h3>
+<ol>
+  <li><b>Apresentação (UI) — pacote <i>ui</i>:</b> Activities (<i>LoginActivity</i>, <i>MainActivity</i>, <i>CadastroActivity</i>, <i>DetalheActivity</i>), <i>AgendamentoAdapter</i> (RecyclerView/ViewHolder) e os layouts XML em <i>ConstraintLayout</i> com componentes Material 3. O acesso às views é feito por <b>View Binding</b>.</li>
+  <li><b>Negócio — pacote <i>negocio</i>:</b> a classe <i>RegrasNegocio</i> centraliza validações e regras (login, cliente, telefone, horário, conflito e cancelamento), retornando <i>null</i> quando a operação é permitida.</li>
+  <li><b>Dados — pacote <i>data</i>:</b> <i>AgendamentoRepository</i> (mediação e execução assíncrona), <i>Sessao</i> (sessão do usuário em <i>SharedPreferences</i>), <i>AppDatabase</i> (Room), DAOs (<i>AgendamentoDao</i>, <i>UsuarioDao</i>) e <i>models</i> (<i>Usuario</i>, <i>Agendamento</i>).</li>
+  <li><b>Persistência:</b> SQLite por meio do Room.</li>
+</ol>
+
+<h3>4.2 Fluxos principais</h3>
+<p><b>Autenticação:</b> a UI envia login/senha a <i>RegrasNegocio.validarLogin</i>; em seguida o <i>AgendamentoRepository.autenticar</i> consulta o <i>UsuarioDao</i> em thread secundária e devolve o usuário à UI, que grava a sessão (<i>Sessao.abrir</i>) e navega para a agenda.</p>
+<p><b>Cadastro de agendamento:</b> a <i>CadastroActivity</i> captura data e hora com <i>MaterialDatePicker</i> e <i>MaterialTimePicker</i>, valida os campos com <i>RegrasNegocio</i> e verifica conflito de horário no repositório antes de inserir. O <i>status</i> inicial é CONFIRMADO e o <i>criadoPor</i> vem da sessão.</p>
+
+<h3>4.3 Concorrência, ciclo de vida e navegação</h3>
+<ul>
+  <li><b>Threads:</b> operações de banco rodam em <i>ExecutorService</i> (fora da thread principal) e os resultados retornam à UI via <i>Handler(Looper.getMainLooper())</i>; a listagem usa <i>LiveData</i>, respeitando o ciclo de vida.</li>
+  <li><b>Ciclo de vida:</b> o estado é preservado com <i>onSaveInstanceState</i> (datas/horas em seleção e dados do detalhe), e as telas revalidam a sessão em <i>onCreate</i>.</li>
+  <li><b>Navegação:</b> Intents explícitas; o detalhe recebe o objeto <i>Agendamento</i> via <i>Serializable</i> com verificação de tipo (<i>instanceof</i>) e finalização segura caso o dado esteja ausente (sem crash).</li>
+</ul>
+
+<h2>5. Justificativa da pilha tecnológica</h2>
+<table class="dados">
+  <tr><th>Escolha</th><th>Justificativa</th></tr>
+  <tr><td>Android nativo em <b>Java</b></td><td>Recursos nativos e melhor desempenho de execução em dispositivo real; alinhado ao conteúdo da disciplina (Java, View Binding, Lambda, Intents, RecyclerView).</td></tr>
+  <tr><td><b>Room (SQLite)</b></td><td>Persistência local estruturada com verificação de consultas em tempo de compilação, integração com <i>LiveData</i> e suporte a migrações.</td></tr>
+  <tr><td><b>Material Design 3</b></td><td>Componentes modernos (<i>MaterialButton</i>, <i>MaterialCardView</i>, <i>TextInputLayout</i>), tema claro/escuro automático e acessibilidade.</td></tr>
+  <tr><td><b>ConstraintLayout</b></td><td>Telas responsivas com hierarquia plana, substituindo layouts legados (<i>RelativeLayout</i>/<i>LinearLayout</i> como raiz).</td></tr>
+  <tr><td><b>View Binding</b></td><td>Elimina <i>findViewById</i> e reduz crashes por referência nula; tipagem segura gerada em tempo de compilação.</td></tr>
+  <tr><td><b>RecyclerView + DiffUtil</b></td><td>Listagem performática com reciclagem de views e atualização eficiente.</td></tr>
+  <tr><td><b>Gradle + KSP</b></td><td>Build padronizado e processamento de anotações do Room em tempo de compilação.</td></tr>
+</table>
+<p><b>Alternativas consideradas e descartadas:</b> Kotlin/Jetpack Compose (a disciplina enfatiza Java e XML/View Binding); backend remoto (Firebase) na N1, postergado para a N2 por ser requisito R6; autenticação com hash de senha — previsto para evolução, mantendo-se senhas de demonstração nesta etapa.</p>
+
+<h2>6. Rastreabilidade com os requisitos (Seção 5 do Documento Norteador)</h2>
+<table class="dados">
+  <tr><th>Req.</th><th>Descrição</th><th>Situação atual</th></tr>
+  <tr><td>R1</td><td>Mínimo de 6 telas funcionais</td><td><span class="parcial">Parcial</span> — 4 telas (Login, Agenda, Cadastro, Detalhe); ampliar na N2.</td></tr>
+  <tr><td>R2</td><td>Autenticação com 2 perfis</td><td><span class="ok">Atendido</span> — DONO e CLIENTE com permissões distintas.</td></tr>
+  <tr><td>R3</td><td>Manutenção de dados sobre 2 entidades</td><td><span class="parcial">Parcial</span> — Agendamento com inclusão/consulta/alteração; cadastro de usuário pela UI e exclusão previstos para a N2.</td></tr>
+  <tr><td>R4</td><td>Mínimo de 3 regras de negócio não triviais</td><td><span class="ok">Atendido</span> — conflito de horário, antecedência mínima de 1h e limite de cancelamento de 2h (dono cancela a qualquer momento).</td></tr>
+  <tr><td>R5</td><td>Persistência local com tratamento de ausência de conexão</td><td><span class="ok">Atendido</span> — Room/SQLite, operação offline.</td></tr>
+  <tr><td>R6</td><td>Persistência remota / sincronização</td><td><span class="falta">Previsto para a N2</span></td></tr>
+  <tr><td>R7</td><td>Integração com serviço externo</td><td><span class="falta">Previsto para a N2</span></td></tr>
+  <tr><td>R8</td><td>Recurso nativo do dispositivo</td><td><span class="falta">Previsto para a N2</span> — uso de câmera/geolocalização/notificações.</td></tr>
+  <tr><td>R9</td><td>Listagem com filtro/busca e visão consolidada</td><td><span class="parcial">Parcial</span> — busca implementada; visão consolidada (indicador/gráfico) prevista para a N2.</td></tr>
+  <tr><td>R10</td><td>Tratamento de erros e estados</td><td><span class="parcial">Parcial</span> — mensagens (Snackbar/Toast), estado de lista vazia e desabilitação de botões; indicador de carregamento a refinar.</td></tr>
+  <tr><td>R11</td><td>Usabilidade e acessibilidade</td><td><span class="parcial">Parcial</span> — rótulos, contraste (M3) e áreas de toque; revisão contínua.</td></tr>
+  <tr><td>R12</td><td>Organização em camadas, sem credenciais no código</td><td><span class="ok">Atendido</span> — pacotes data/negocio/ui; credenciais de demonstração via buildConfig.</td></tr>
+  <tr><td>R13</td><td>Repositório Git com histórico distribuído e README</td><td><span class="parcial">Parcial</span> — repositório ativo; README e histórico distribuído em andamento.</td></tr>
+  <tr><td>R14</td><td>Pacote instalável testado em dispositivo</td><td><span class="parcial">Parcial</span> — APK de depuração gerado; teste em aparelho físico previsto.</td></tr>
+</table>
+
+<h2>7. Considerações finais</h2>
+<p>A modelagem atende ao mínimo exigido (duas entidades relacionadas e validadas) e sustenta as três regras de negócio da aplicação. A arquitetura em camadas separa responsabilidades, isola a persistência e prepara a evolução para a N2, quando serão incorporados o backend remoto com sincronização (R6), a integração externa (R7), o recurso nativo do dispositivo (R8) e a visão consolidada de dados (R9), além da ampliação do número de telas (R1).</p>
+
+<h2>8. Referências</h2>
+<ul>
+  <li>Documento Norteador — Projeto Integrador ADS 2026/2. PUC Goiás, versão 2.0.</li>
+  <li>Android Developers — <i>Room Persistence Library</i>, <i>View Binding</i>, <i>ConstraintLayout</i>, <i>RecyclerView</i>.</li>
+  <li>Material Design 3 — componentes e diretrizes de acessibilidade.</li>
+</ul>
+
+</body>
+</html>

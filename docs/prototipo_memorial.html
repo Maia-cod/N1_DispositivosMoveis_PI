@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<title>Memorial Descritivo - Prototipo de Interfaces - BarberAgenda</title>
+<style>
+  body { font-family: "Calibri","Segoe UI",Arial,sans-serif; font-size: 11pt; color:#1c1b1f; line-height:1.5; }
+  h1 { font-size:20pt; color:#4f378b; text-align:center; margin-bottom:4pt; }
+  h2 { font-size:15pt; color:#4f378b; border-bottom:2px solid #6750a4; padding-bottom:3pt; margin-top:22pt; }
+  h3 { font-size:12.5pt; color:#00629d; margin-top:14pt; }
+  .capa { text-align:center; margin-bottom:6pt; }
+  .capa .inst { font-size:12pt; }
+  .capa .titulo { font-size:22pt; font-weight:bold; color:#4f378b; margin-top:24pt; }
+  .capa .sub { font-size:14pt; color:#313033; margin-top:6pt; }
+  .meta { width:100%; margin-top:28pt; border-collapse:collapse; }
+  .meta td { border:1px solid #cac4d0; padding:7pt 10pt; font-size:10.5pt; }
+  .meta td.l { background:#f3edf7; font-weight:bold; width:30%; color:#4f378b; }
+  table.t { width:100%; border-collapse:collapse; margin-top:8pt; }
+  table.t th { background:#6750a4; color:#fff; padding:6pt 8pt; font-size:10.5pt; text-align:left; border:1px solid #4f378b; }
+  table.t td { border:1px solid #cac4d0; padding:6pt 8pt; font-size:10.5pt; vertical-align:top; }
+  table.t tr:nth-child(even) td { background:#faf8ff; }
+  .fig { text-align:center; margin:10pt 0; }
+  .fig img { width:640px; border:1px solid #e0e0e0; border-radius:6px; }
+  .legenda { text-align:center; font-size:9.5pt; color:#49454f; font-style:italic; margin-top:3pt; }
+  .nota { background:#f3edf7; border-left:5px solid #6750a4; padding:8pt 12pt; margin:10pt 0; font-size:10.5pt; }
+  .ok { color:#146c2e; font-weight:bold; }
+  ul,ol { margin-top:4pt; } li { margin-bottom:3pt; }
+  .flow { text-align:center; font-size:11pt; color:#4f378b; font-weight:bold; margin:10pt 0; }
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <p class="inst"><b>PONTIFÍCIA UNIVERSIDADE CATÓLICA DE GOIÁS</b><br>
+  Escola Politécnica e de Artes<br>
+  Curso Superior de Tecnologia em Análise e Desenvolvimento de Sistemas</p>
+  <p class="titulo">Memorial Descritivo<br>Protótipo de Interfaces — Usabilidade e Acessibilidade</p>
+  <p class="sub">Aplicação móvel <b>BarberAgenda</b> — Projeto Integrador 2026/2</p>
+</div>
+
+<table class="meta">
+  <tr><td class="l">Projeto</td><td>BarberAgenda — agendamento de serviços em barbearia</td></tr>
+  <tr><td class="l">Etapa</td><td>N1 — primeiro bimestre</td></tr>
+  <tr><td class="l">Artefato</td><td>Protótipo navegável das interfaces, com justificativa das decisões de usabilidade e acessibilidade (item 3 da N1)</td></tr>
+  <tr><td class="l">Formato do protótipo</td><td>Projeto navegável em HTML (alta fidelidade), no arquivo <i>docs/prototipo/barberagenda-prototipo.html</i></td></tr>
+  <tr><td class="l">Equipe</td><td>(preencher) — coordenador e integrantes com atribuições</td></tr>
+  <tr><td class="l">Data</td><td>___/___/______</td></tr>
+</table>
+
+<h2>1. Objetivo e escopo</h2>
+<p>Este documento descreve e justifica as decisões de <b>usabilidade</b> e <b>acessibilidade</b> adotadas no protótipo navegável do BarberAgenda. O protótipo é clicável e cobre o fluxo principal do usuário: autenticação, consulta da agenda, criação de agendamento e gestão (cancelar/concluir).</p>
+
+<h2>2. Telas e fluxo de navegação</h2>
+<div class="fig">
+  <img src="img/telas.png" alt="Telas do protótipo: Login, Agenda, Novo agendamento e Detalhe">
+  <p class="legenda">Figura 1 — Telas do protótipo: (1) Login, (2) Agenda, (3) Novo agendamento e (4) Detalhe do agendamento.</p>
+</div>
+<div class="flow">Login → Agenda → (botão +) Novo agendamento → Agenda → (toque no item) Detalhe → Cancelar / Concluir</div>
+
+<table class="t">
+  <tr><th>Tela</th><th>Objetivo</th><th>Componentes principais</th></tr>
+  <tr><td>1. Login</td><td>Autenticar o usuário e definir o perfil (dono/cliente).</td><td>ImageView (logo), 2 TextInputLayout OutlinedBox, MaterialButton, texto de ajuda com credenciais.</td></tr>
+  <tr><td>2. Agenda</td><td>Listar os agendamentos e permitir busca por cliente.</td><td>RecyclerView de MaterialCardView, campo de busca, FloatingActionButton, menu “Sair”, estado de lista vazia.</td></tr>
+  <tr><td>3. Novo agendamento</td><td>Registrar um atendimento com validação e seleção de data/hora.</td><td>TextInputLayout (cliente, telefone, serviço por dropdown, observação), MaterialDatePicker, MaterialTimePicker, MaterialButton.</td></tr>
+  <tr><td>4. Detalhe</td><td>Exibir todos os dados e permitir concluir ou cancelar.</td><td>Rótulos/valores tipográficos, MaterialButton (outlined) e diálogo de confirmação (MaterialAlertDialogBuilder).</td></tr>
+</table>
+
+<h2>3. Componentes do Material Design 3</h2>
+<table class="t">
+  <tr><th>Componente</th><th>Onde é usado</th><th>Motivo</th></tr>
+  <tr><td>TextInputLayout (OutlinedBox)</td><td>Login, cadastro e busca</td><td>Rótulo flutuante, exibição de erro junto ao campo e maior clareza de preenchimento.</td></tr>
+  <tr><td>MaterialButton</td><td>Todas as telas</td><td>Botões de ações primárias (preenchido), secundárias (contornado) e terciárias (texto), com áreas de toque amplas.</td></tr>
+  <tr><td>MaterialCardView</td><td>Itens da agenda</td><td>Agrupa as informações de cada agendamento com elevação e cantos arredondados, reforçando que o item é clicável.</td></tr>
+  <tr><td>FloatingActionButton</td><td>Agenda</td><td>Ação principal destacada (“novo agendamento”) sempre acessível com o dedo.</td></tr>
+  <tr><td>MaterialDatePicker / MaterialTimePicker</td><td>Cadastro</td><td>Seleção guiada de data e hora, eliminando erros de digitação e formatação.</td></tr>
+  <tr><td>MaterialAlertDialogBuilder</td><td>Confirmação de cancelamento</td><td>Prevenção de ação destrutiva acidental.</td></tr>
+  <tr><td>Snackbar / Toast</td><td>Feedback de sucesso/erro</td><td>Retorno imediato e discreto após as operações.</td></tr>
+</table>
+
+<h2>4. Justificativa de usabilidade</h2>
+<p>As decisões seguem as heurísticas de usabilidade de Nielsen, adaptadas às diretrizes do Material Design 3:</p>
+<table class="t">
+  <tr><th>Heurística</th><th>Aplicação no protótipo</th></tr>
+  <tr><td>Visibilidade do estado do sistema</td><td>Status de cada agendamento em destaque e colorido (Confirmado, ATRASADO, Cancelado, Concluído); Snackbar confirma o resultado das ações; botões ficam desabilitados durante a operação.</td></tr>
+  <tr><td>Correspondência com o mundo real</td><td>Linguagem do domínio (“Corte”, “Barba”, “Escolher data”), datas em <i>dd/mm/aaaa</i> e horários no formato 24h.</td></tr>
+  <tr><td>Controle e liberdade do usuário</td><td>Botão “Cancelar” nas telas e “Voltar” na barra superior; o cancelamento de agendamento exige confirmação.</td></tr>
+  <tr><td>Consistência e padrões</td><td>Componentes nativos do Material 3; mesmos padrões de barra, campos e botões em todas as telas.</td></tr>
+  <tr><td>Prevenção de erros</td><td>Validação de campos antes de salvar; uso de seletores de data/hora em vez de digitação; bloqueio de horários em conflito e com menos de 1h de antecedência.</td></tr>
+  <tr><td>Reconhecimento em vez de memorização</td><td>Lista exibe cliente, serviço, hora e data; a tela de login traz dica das credenciais de teste.</td></tr>
+  <tr><td>Eficiência e flexibilidade</td><td>Busca por nome do cliente para localizar rapidamente um agendamento.</td></tr>
+  <tr><td>Estética e minimalismo</td><td>Hierarquia clara (título, informação primária, detalhes); sem elementos supérfluos.</td></tr>
+</table>
+
+<h2>5. Justificativa de acessibilidade</h2>
+<ul>
+  <li><b>Contraste adequado:</b> uso dos <i>color roles</i> do Material 3 (primary/onPrimary, surface/onSurface) que garantem contraste mínimo; os status não dependem apenas de cor — há sempre o texto (“ATRASADO”, “Cancelado”).</li>
+  <li><b>Áreas de toque:</b> botões ocupam a largura da tela, ícones têm 44–48&nbsp;dp e o FAB 60&nbsp;dp, acima do mínimo recomendado (48&nbsp;dp).</li>
+  <li><b>Rótulos para leitores de tela:</b> o ícone de “novo agendamento” tem <i>contentDescription</i> (“Criar novo agendamento”) e cada item da lista descreve a ação (“Abrir detalhes do agendamento de …”); a logo possui descrição.</li>
+  <li><b>Textos externalizados:</b> todas as strings ficam em <i>strings.xml</i>, facilitando tradução e manutenção.</li>
+  <li><b>Tema claro e escuro:</b> o tema base <i>Theme.Material3.DayNight</i> adapta cores automaticamente à preferência do sistema.</li>
+  <li><b>Hierarquia tipográfica:</b> estilos do Material 3 (<i>TextAppearance</i>) reforçam a leitura com tamanhos e pesos consistentes.</li>
+</ul>
+
+<h2>6. Conformidade com o requisito R11</h2>
+<table class="t">
+  <tr><th>Critério (R11)</th><th>Situação</th></tr>
+  <tr><td>Aderência às heurísticas de usabilidade</td><td><span class="ok">Atendido</span> — ver Seção 4.</td></tr>
+  <tr><td>Contraste adequado</td><td><span class="ok">Atendido</span> — color roles do Material 3 e status com texto + cor.</td></tr>
+  <tr><td>Áreas de toque compatíveis</td><td><span class="ok">Atendido</span> — botões de largura total e ícones ≥ 44&nbsp;dp.</td></tr>
+  <tr><td>Rótulos descritivos para leitores de tela</td><td><span class="ok">Atendido</span> — contentDescription no FAB, itens da lista e logo.</td></tr>
+</table>
+
+<h2>7. Conclusão</h2>
+<p>O protótipo cobre o fluxo principal de forma navegável e aplica os princípios de usabilidade e acessibilidade do Material Design 3. Como evolução, prevê-se testar as telas com ao menos 5 usuários do perfil (conforme o cronograma da N2) e incorporar os ajustes decorrentes, além de gerar capturas em dispositivo físico.</p>
+
+</body>
+</html>

@@ -63,11 +63,11 @@ public class AgendamentoAdapter extends ListAdapter<Agendamento, AgendamentoAdap
         Agendamento agendamento = getItem(position);
         Context contexto = holder.itemView.getContext();
 
-        holder.binding.textCliente.setText(agendamento.cliente);
-        holder.binding.textServico.setText(agendamento.servico);
-        holder.binding.textHora.setText(formatoHora.format(new Date(agendamento.dataHora)));
-        holder.binding.textData.setText(formatoData.format(new Date(agendamento.dataHora)));
-        pintarStatus(contexto, holder.binding.textStatus, agendamento);
+        holder.vinculo.textCliente.setText(agendamento.cliente);
+        holder.vinculo.textServico.setText(agendamento.servico);
+        holder.vinculo.textHora.setText(formatoHora.format(new Date(agendamento.dataHora)));
+        holder.vinculo.textData.setText(formatoData.format(new Date(agendamento.dataHora)));
+        pintarStatus(contexto, holder.vinculo.textStatus, agendamento);
 
         holder.itemView.setContentDescription(
                 contexto.getString(R.string.descricao_abrir_agendamento, agendamento.cliente));
@@ -98,11 +98,11 @@ public class AgendamentoAdapter extends ListAdapter<Agendamento, AgendamentoAdap
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private final ItemAgendamentoBinding binding;
+        private final ItemAgendamentoBinding vinculo;
 
         ViewHolder(ItemAgendamentoBinding vinculo) {
             super(vinculo.getRoot());
-            this.binding = vinculo;
+            this.vinculo = vinculo;
         }
     }
 }

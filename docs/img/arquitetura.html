@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1200px; height: 900px; background: #ffffff; font-family: "Segoe UI", Arial, sans-serif; }
+  .titulo { text-align: center; font-size: 25px; font-weight: 700; color: #1c1b1f; padding: 20px 0 4px; }
+  .sub { text-align: center; font-size: 13px; color: #6750a4; font-weight: 600; margin-bottom: 14px; }
+  .wrap { width: 1080px; margin: 0 auto; }
+  .camada { border-radius: 14px; padding: 12px 16px 14px; margin-bottom: 0; border: 2px solid; position: relative; }
+  .camada > h3 { margin: 0 0 10px; font-size: 15px; letter-spacing: .4px; text-transform: uppercase; }
+  .mods { display: flex; gap: 10px; flex-wrap: wrap; }
+  .mod { background: #fff; border: 1.5px solid #cac4d0; border-radius: 9px; padding: 9px 12px; font-size: 13px; color: #1c1b1f; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .mod b { display: block; font-size: 13.5px; }
+  .mod span { font-size: 11.5px; color: #79747e; }
+  #ui { border-color: #6750a4; background: #f6f1ff; }
+  #ui > h3 { color: #4f378b; }
+  #neg { border-color: #146c2e; background: #eefaf0; }
+  #neg > h3 { color: #146c2e; }
+  #dad { border-color: #b26a00; background: #fff5e8; }
+  #dad > h3 { color: #8a5200; }
+  #per { border-color: #00629d; background: #eaf5fe; }
+  #per > h3 { color: #00629d; }
+  .mod.accent { border-color: #6750a4; background: #eaddff; }
+  .mod.neg { border-color: #146c2e; background: #d6f3dd; }
+  .mod.dad { border-color: #b26a00; background: #ffe7c2; }
+  .mod.per { border-color: #00629d; background: #cfebfd; }
+  .arrow { text-align: center; font-size: 13px; color: #49454f; padding: 5px 0; font-weight: 600; }
+  .arrow .big { font-size: 20px; display: block; line-height: 1; color: #6750a4; }
+  .legenda { margin-top: 16px; background: #f3edf7; border-left: 5px solid #6750a4; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #313033; line-height: 1.5; }
+  .legenda b { color: #4f378b; }
+  .stack { display: flex; gap: 24px; align-items: flex-start; }
+  .stack .col { flex: 1; }
+</style>
+</head>
+<body>
+  <div class="titulo">Arquitetura em Camadas — BarberAgenda</div>
+  <div class="sub">Padrão de separação de responsabilidades: Apresentação → Negócio → Dados → Persistência</div>
+  <div class="wrap">
+
+    <div class="camada" id="ui">
+      <h3>1. Camada de Apresentação (UI) — Android</h3>
+      <div class="mods">
+        <div class="mod accent"><b>LoginActivity</b><span>autenticação / sessão</span></div>
+        <div class="mod accent"><b>MainActivity</b><span>agenda + busca</span></div>
+        <div class="mod accent"><b>CadastroActivity</b><span>novo agendamento</span></div>
+        <div class="mod accent"><b>DetalheActivity</b><span>detalhe / status</span></div>
+        <div class="mod"><b>AgendamentoAdapter</b><span>RecyclerView + ViewHolder</span></div>
+        <div class="mod"><b>Layouts XML</b><span>ConstraintLayout + Material 3</span></div>
+        <div class="mod"><b>View Binding</b><span>acesso tipado às views</span></div>
+      </div>
+    </div>
+
+    <div class="arrow"><span class="big">▼</span> chama validações / regras &nbsp;·&nbsp; ▲ recebe resultado</div>
+
+    <div class="camada" id="neg">
+      <h3>2. Camada de Negócio</h3>
+      <div class="mods">
+        <div class="mod neg"><b>RegrasNegocio</b><span>login, cliente, telefone, horário, conflito, cancelamento</span></div>
+      </div>
+    </div>
+
+    <div class="arrow"><span class="big">▼</span> solicita operação de dados (main → thread de E/S) &nbsp;·&nbsp; ▲ callback / LiveData</div>
+
+    <div class="camada" id="dad">
+      <h3>3. Camada de Dados (repositório)</h3>
+      <div class="mods">
+        <div class="mod dad"><b>AgendamentoRepository</b><span>ExecutorService + Handler (main thread)</span></div>
+        <div class="mod dad"><b>Sessao</b><span>SharedPreferences (login / perfil)</span></div>
+      </div>
+    </div>
+
+    <div class="arrow"><span class="big">▼</span> consulta / insere / atualiza &nbsp;·&nbsp; ▲ LiveData&lt;List&lt;Agendamento&gt;&gt;</div>
+
+    <div class="camada" id="per">
+      <h3>4. Persistência local</h3>
+      <div class="mods">
+        <div class="mod per"><b>AppDatabase</b><span>RoomDatabase (singleton)</span></div>
+        <div class="mod per"><b>AgendamentoDao</b><span>@Insert @Update @Query</span></div>
+        <div class="mod per"><b>UsuarioDao</b><span>autenticar / inserir</span></div>
+        <div class="mod per"><b>Models</b><span>Usuario · Agendamento (@Entity)</span></div>
+        <div class="mod per"><b>SQLite</b><span>barberagenda.db</span></div>
+      </div>
+    </div>
+
+    <div class="legenda">
+      <b>Decisões técnicas:</b> operações de banco rodam fora da main thread (<b>ExecutorService</b>) e retornam via <b>Handler(Looper.getMainLooper())</b>; a listagem usa <b>LiveData</b> (Observer atento ao ciclo de vida) para atualizar a UI automaticamente. A UI nunca acessa o banco diretamente — sempre pela camada de negócio/repositório. Persistência 100% local (Room/SQLite), o que garante funcionamento sem conectividade.
+    </div>
+  </div>
+</body>
+</html>
