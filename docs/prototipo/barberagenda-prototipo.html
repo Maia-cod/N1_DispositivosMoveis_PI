@@ -401,7 +401,11 @@
     if(!l.value.trim() || !s.value) ok=false;
     if(ok){
       var dono = l.value.trim().toLowerCase()==='carlos';
+<<<<<<< HEAD
       document.getElementById('agenda-titulo').textContent = dono ? 'Agenda — carlos (dono)' : 'Agenda — ana (cliente)';
+=======
+      document.getElementById('agenda-titulo').textContent = dono ? 'Agenda — Carlos (barbeiro)' : 'Agenda — Ana (cliente)';
+>>>>>>> 2dfd45fc015ddfc7418bd81dcbf71d9c5b7c9a5e
       irPara('agenda');
     }
   }

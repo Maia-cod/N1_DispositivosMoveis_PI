@@ -51,10 +51,17 @@ Projeto integrador da disciplina Projeto Integrador ADS 2026/2. Objetivo: aplica
 
 | Semana | Atividade | Responsável (placeholder) | Entregável |
 |--------|-----------|---------------------------|------------|
+<<<<<<< HEAD
 | 5 (31/08–04/09) | Modelagem de dados, DER e repositório | Isabella Batista | DER + memorial arquitetural |
 | 6 (08–11/09) | Protótipo navegável; backlog prioritizado | Kevin Lucas | Protótipo HTML + BACKLOG.md |
 | 7 (14–18/09) | Estrutura em camadas, navegação e autenticação | Felipe Moura | Login + navegação entre 4 telas |
 | 8 (21–25/09) | Módulo de agendamento e persistência local | Integrante 4 | CRUD de agendamento + Room |
+=======
+| 5 (31/08–04/09) | Modelagem de dados, DER e repositório | Ana | DER + memorial arquitetural |
+| 6 (08–11/09) | Protótipo navegável; backlog prioritizado | Bruno | Protótipo HTML + BACKLOG.md |
+| 7 (14–18/09) | Estrutura em camadas, navegação e autenticação | Carlos | Login + navegação entre 4 telas |
+| 8 (21–25/09) | Módulo de agendamento e persistência local | Diego | CRUD de agendamento + Room |
+>>>>>>> 2dfd45fc015ddfc7418bd81dcbf71d9c5b7c9a5e
 | 9 (28/09–02/10) | Revisão, ajuste de regras e entrega da N1 | Equipe | Artefatos da N1 (docx + código) |
 | 10–12 | Evolução para N2: 6+ telas, cadastro de usuários, remoto | — | — |
 
@@ -64,12 +71,21 @@ Projeto integrador da disciplina Projeto Integrador ADS 2026/2. Objetivo: aplica
 
 | Integrante | Atribuição técnica | Áreas de foco (N1 → N2) |
 |------------|-------------------|-------------------------|
+<<<<<<< HEAD
 | **Kevin Lucas** (coordenador) | Gestão do projeto, interlocução com o docente, documentação | Acompanhamento de prazos, revisão de documentos |
 | **Isabella Batista** (responsável técnico) | Persistência (Room) e camada de dados | RF01–RF11, modelo de banco, sincronização N2 |
 | **Felipe Moura** | Interface (layouts, View Binding) e navegação | RF03–RF16, protótipo, telas N2 |
 | **Integrante 4** | Regras de negócio, listas (RecyclerView) e protótipo | RF10–RF15, regras RN01–RN05, visão consolidada N2 |
 
 > **Observação:** o Documento Norteador exige equipes de 3 a 4 integrantes. Kevin Lucas (coordenador), Isabella Batista (responsável técnico) e Felipe Moura (interface e navegação) estão definidos; falta apenas o Integrante 4 (regras de negócio, listas e protótipo) a ser indicado oficialmente.
+=======
+| **Integrante 1** (coordenador) | Gestão do projeto, interlocução com o docente, documentação | Acompanhamento de prazos, revisão de documentos |
+| **Integrante 2** | Persistência (Room) e camada de dados | RF01–RF11, modelo de banco, sincronização N2 |
+| **Integrante 3** | Interface (layouts, View Binding) e navegação | RF03–RF16, protótipo, telas N2 |
+| **Integrante 4** | Regras de negócio, listas (RecyclerView) e protótipo | RF10–RF15, regras RN01–RN05, visão consolidada N2 |
+
+> **Observação:** os nomes dos integrantes foram substituídos por “placeholder” pois ainda não foram definidos oficialmente. A distribuição será confirmada no início do semestre.
+>>>>>>> 2dfd45fc015ddfc7418bd81dcbf71d9c5b7c9a5e
 
 ---
 

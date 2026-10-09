@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1200px; height: 720px; background: #ffffff; font-family: "Segoe UI", Arial, sans-serif; }
+  .titulo { text-align: center; font-size: 26px; font-weight: 700; color: #1c1b1f; padding: 22px 0 6px; }
+  .sub { text-align: center; font-size: 14px; color: #6750a4; margin-bottom: 18px; font-weight: 600; letter-spacing: .5px; }
+  .canvas { position: relative; width: 1200px; height: 600px; }
+  .entidade { position: absolute; width: 360px; border: 2px solid #6750a4; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 18px rgba(103,80,164,.18); background: #fff; }
+  .entidade h2 { margin: 0; padding: 12px 16px; background: #6750a4; color: #fff; font-size: 18px; letter-spacing: .4px; }
+  .entidade h2 small { font-weight: 400; opacity: .85; font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 8px 16px; font-size: 14px; border-top: 1px solid #eee; color: #1c1b1f; }
+  td.tipo { text-align: right; color: #79747e; font-family: Consolas, monospace; font-size: 12.5px; width: 40%; }
+  td .pk { color: #b3261e; font-weight: 700; }
+  td .fk { color: #146c2e; font-weight: 700; }
+  tr:nth-child(even) td { background: #faf8ff; }
+  #e1 { left: 40px;  top: 90px; }
+  #e2 { right: 40px; top: 90px; }
+  .rel { position: absolute; left: 400px; top: 90px; width: 400px; height: 420px; }
+  .card-rel { position: absolute; left: 400px; top: 300px; width: 400px; text-align: center; }
+  .losango { display: inline-block; width: 190px; height: 74px; background: #eaddff; border: 2px solid #6750a4; transform: rotate(45deg); margin: 30px 0 6px; }
+  .losango-txt { position: relative; top: 26px; transform: rotate(-45deg); font-size: 14px; font-weight: 700; color: #4f378b; }
+  .nota { position: absolute; left: 50%; transform: translateX(-50%); bottom: 12px; width: 900px; text-align: center; font-size: 13px; color: #49454f; background: #f3edf7; border-left: 5px solid #6750a4; border-radius: 8px; padding: 10px 14px; }
+  .card { position: absolute; font-size: 15px; font-weight: 700; color: #4f378b; background: #fff; padding: 2px 6px; }
+  .c1 { left: 405px; top: 205px; }
+  .c2 { left: 700px; top: 205px; }
+</style>
+</head>
+<body>
+  <div class="titulo">Modelo Entidade-Relacionamento — BarberAgenda</div>
+  <div class="sub">Banco local (Room / SQLite) — barberagenda.db — versão 1</div>
+  <div class="canvas">
+    <div class="entidade" id="e1">
+      <h2>Usuario <small>(usuarios)</small></h2>
+      <table>
+        <tr><td><span class="pk">PK</span> id</td><td class="tipo">long (auto)</td></tr>
+        <tr><td>nome</td><td class="tipo">String</td></tr>
+        <tr><td>login</td><td class="tipo">String</td></tr>
+        <tr><td>senha</td><td class="tipo">String</td></tr>
+        <tr><td>perfil</td><td class="tipo">String</td></tr>
+      </table>
+    </div>
+
+    <div class="entidade" id="e2">
+      <h2>Agendamento <small>(agendamentos)</small></h2>
+      <table>
+        <tr><td><span class="pk">PK</span> id</td><td class="tipo">long (auto)</td></tr>
+        <tr><td>cliente</td><td class="tipo">String</td></tr>
+        <tr><td>telefone</td><td class="tipo">String</td></tr>
+        <tr><td>servico</td><td class="tipo">String</td></tr>
+        <tr><td>dataHora</td><td class="tipo">long (epoch)</td></tr>
+        <tr><td>observacao</td><td class="tipo">String</td></tr>
+        <tr><td>status</td><td class="tipo">String</td></tr>
+        <tr><td><span class="fk">FK</span> criadoPor</td><td class="tipo">String → login</td></tr>
+      </table>
+    </div>
+
+    <svg class="rel" width="400" height="420">
+      <line x1="10" y1="120" x2="390" y2="120" stroke="#6750a4" stroke-width="2.5"/>
+    </svg>
+    <div class="card-rel"><div class="losango"></div><div class="losango-txt">realiza</div></div>
+    <div class="card c1">1</div>
+    <div class="card c2">N</div>
+
+    <div class="nota">Cardinalidade: 1 Usuario realiza N Agendamentos. O vínculo é lógico, por meio do campo <b>criadoPor</b> (login do usuário autenticado) — o domínio registra quem criou cada agendamento.</div>
+  </div>
+</body>
+</html>

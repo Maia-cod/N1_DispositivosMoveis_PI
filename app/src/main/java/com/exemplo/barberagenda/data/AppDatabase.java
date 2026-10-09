@@ -43,7 +43,11 @@ public abstract class AppDatabase extends RoomDatabase {
     private static class SeedCallback extends Callback {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
+<<<<<<< HEAD
             inserirUsuario(db, "Carlos",
+=======
+            inserirUsuario(db, "Carlos (barbeiro)",
+>>>>>>> 2dfd45fc015ddfc7418bd81dcbf71d9c5b7c9a5e
                     BuildConfig.DEMO_DONO_LOGIN, BuildConfig.DEMO_DONO_SENHA, Usuario.PERFIL_DONO);
             inserirUsuario(db, "Ana",
                     BuildConfig.DEMO_CLIENTE_LOGIN, BuildConfig.DEMO_CLIENTE_SENHA, Usuario.PERFIL_CLIENTE);

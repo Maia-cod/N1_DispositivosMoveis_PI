@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<title>Documento de Projeto - BarberAgenda - N1</title>
+<style>
+  body { font-family: "Calibri","Segoe UI",Arial,sans-serif; font-size: 11pt; color:#1c1b1f; line-height:1.5; }
+  h1 { font-size:20pt; color:#4f378b; text-align:center; margin-bottom:4pt; }
+  h2 { font-size:15pt; color:#4f378b; border-bottom:2px solid #6750a4; padding-bottom:3pt; margin-top:22pt; }
+  h3 { font-size:12.5pt; color:#00629d; margin-top:14pt; }
+  .capa { text-align:center; margin-bottom:6pt; }
+  .capa .inst { font-size:12pt; }
+  .capa .titulo { font-size:22pt; font-weight:bold; color:#4f378b; margin-top:24pt; }
+  .capa .sub { font-size:14pt; color:#313033; margin-top:6pt; }
+  .meta { width:100%; margin-top:26pt; border-collapse:collapse; }
+  .meta td { border:1px solid #cac4d0; padding:7pt 10pt; font-size:10.5pt; }
+  .meta td.l { background:#f3edf7; font-weight:bold; width:30%; color:#4f378b; }
+  table.t { width:100%; border-collapse:collapse; margin-top:8pt; }
+  table.t th { background:#6750a4; color:#fff; padding:6pt 8pt; font-size:10pt; text-align:left; border:1px solid #4f378b; }
+  table.t td { border:1px solid #cac4d0; padding:5pt 8pt; font-size:10pt; vertical-align:top; }
+  table.t tr:nth-child(even) td { background:#faf8ff; }
+  .fig { text-align:center; margin:10pt 0; }
+  .fig img { width:600px; border:1px solid #e0e0e0; border-radius:6px; }
+  .legenda { text-align:center; font-size:9.5pt; color:#49454f; font-style:italic; margin-top:3pt; }
+  .nota { background:#f3edf7; border-left:5px solid #6750a4; padding:8pt 12pt; margin:10pt 0; font-size:10.5pt; }
+  .tag { font-weight:bold; }
+  .ess { color:#b3261e; } .imp { color:#b26a00; } .des { color:#00629d; }
+  .sumario { font-size:10.5pt; } .sumario li { margin-bottom:2pt; }
+  ul,ol { margin-top:4pt; } li { margin-bottom:3pt; }
+  .persona { border:1px solid #cac4d0; border-left:6px solid #6750a4; border-radius:6px; padding:8pt 12pt; margin:8pt 0; background:#faf8ff; }
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <p class="inst"><b>PONTIFÍCIA UNIVERSIDADE CATÓLICA DE GOIÁS</b><br>
+  Escola Politécnica e de Artes<br>
+  Curso Superior de Tecnologia em Análise e Desenvolvimento de Sistemas</p>
+  <p class="titulo">Documento de Projeto<br>Projeto Integrador — Entrega N1</p>
+  <p class="sub">Aplicação móvel <b>BarberAgenda</b> — Agendamento de serviços em barbearia</p>
+  <p class="sub" style="font-size:12pt">Semestre letivo 2026/2</p>
+</div>
+
+<table class="meta">
+  <tr><td class="l">Nome da equipe</td><td>(preencher)</td></tr>
+  <tr><td class="l">Domínio do problema</td><td>Comércio e serviços — agendamento de serviços em barbearia</td></tr>
+  <tr><td class="l">Pilha tecnológica</td><td>Android nativo — Java 17, Room (SQLite), Material Design 3, View Binding, RecyclerView, Gradle/KSP</td></tr>
+  <tr><td class="l">Repositório</td><td>(inserir endereço do Git)</td></tr>
+  <tr><td class="l">Coordenador(a)</td><td>(preencher)</td></tr>
+  <tr><td class="l">Responsável técnico</td><td>(preencher)</td></tr>
+  <tr><td class="l">Data</td><td>___/___/______</td></tr>
+</table>
+
+<div class="nota"><b>Identificação da equipe e atribuições técnicas:</b>
+<table class="t">
+  <tr><th>Integrante</th><th>Matrícula</th><th>Atribuição técnica</th></tr>
+  <tr><td>(preencher) — coordenador(a)</td><td>—</td><td>Gestão do projeto, interlocução com o docente, documentação</td></tr>
+  <tr><td>(preencher)</td><td>—</td><td>Persistência (Room) e camada de dados</td></tr>
+  <tr><td>(preencher)</td><td>—</td><td>Interface (layouts, View Binding) e navegação</td></tr>
+  <tr><td>(preencher)</td><td>—</td><td>Regras de negócio, listas (RecyclerView) e protótipo</td></tr>
+</table>
+</div>
+
+<h2>Sumário</h2>
+<ol class="sumario">
+  <li>Contexto e caracterização do domínio</li>
+  <li>Descrição do problema e justificativa da solução</li>
+  <li>Objetivos</li>
+  <li>Público-alvo e personas</li>
+  <li>Requisitos funcionais e não funcionais priorizados</li>
+  <li>Regras de negócio</li>
+  <li>Modelagem de dados e diagramas</li>
+  <li>Definição arquitetural e pilha tecnológica</li>
+  <li>Cronograma interno e distribuição de responsabilidades</li>
+  <li>Escopo entregue na N1 e evolução para a N2</li>
+  <li>Referências</li>
+</ol>
+
+<h2>1. Contexto e caracterização do domínio</h2>
+<p>O setor de barbearias é caracterizado por atendimento em horários marcados e por uma agenda diária organizada manualmente — muitas vezes em papel, em aplicativos de mensagem ou na memória do profissional. Esse controle informal favorece <b>conflitos de horário</b>, esquecimentos e faltas, dificultando a gestão do tempo do barbeiro e a experiência do cliente.</p>
+<p>O <b>domínio do problema</b> é o agendamento de serviços de barbearia, com dois papéis bem definidos: o <b>dono/barbeiro</b>, que organiza e conduz a agenda, e o <b>cliente</b>, que marca e eventualmente cancela um horário. O fluxo principal de uso é: autenticar-se → consultar a agenda → registrar um agendamento (cliente, serviço, data e hora) → acompanhar/cancelar/concluir o atendimento.</p>
+<p><b>Entidades principais:</b> <i>Usuario</i> e <i>Agendamento</i>, relacionadas entre si e sujeitas a validação (detalhadas na Seção 7).</p>
+
+<h2>2. Descrição do problema e justificativa da solução</h2>
+<h3>2.1 Problema</h3>
+<p>Sem um controle estruturado, dois clientes podem ser marcados para o mesmo horário, compromissos podem ser esquecidos e cancelamentos de última hora ocorrem sem tempo hábil para reorganizar a agenda. Faltam, ainda, permissões distintas: qualquer pessoa poderia alterar a agenda, o que não é desejável.</p>
+<h3>2.2 Justificativa da solução proposta</h3>
+<p>O <b>BarberAgenda</b> é uma aplicação móvel Android que centraliza a agenda da barbearia e aplica regras de negócio que evitam conflitos e organizam os atendimentos. A solução é <b>local-first</b> (funciona sem conexão) e possui <b>controle de acesso por perfil</b>. A escolha por aplicativo nativo justifica-se pelo uso de recursos do dispositivo, melhor desempenho e alinhamento às disciplinas do módulo.</p>
+<h3>2.3 Proposta de valor</h3>
+<ul>
+  <li><b>Para o barbeiro:</b> agenda do dia organizada, bloqueio automático de horários duplicados e liberdade para cancelar/reorganizar.</li>
+  <li><b>Para o cliente:</b> marcação rápida com seleção visual de data e hora, sem ligações.</li>
+</ul>
+
+<h2>3. Objetivos</h2>
+<h3>3.1 Objetivo geral</h3>
+<p>Desenvolver uma aplicação móvel funcional para o gerenciamento de agendamentos de uma barbearia, aplicando boas práticas de desenvolvimento Android, persistência local e regras de negócio que garantam a integridade da agenda.</p>
+<h3>3.2 Objetivos específicos</h3>
+<ol>
+  <li>Implementar autenticação com dois perfis de acesso (dono e cliente).</li>
+  <li>Permitir o cadastro, a consulta e a alteração de agendamentos com validação de entrada.</li>
+  <li>Aplicar regras de negócio que impeçam conflitos de horário e respeitem prazos de antecedência e cancelamento.</li>
+  <li>Oferecer listagem performática dos agendamentos com busca por cliente.</li>
+  <li>Utilizar recursos nativos do dispositivo (seleção de data e hora).</li>
+  <li>Garantir estabilidade e boa experiência com layouts responsivos e Material Design 3.</li>
+  <li>Evoluir, na N2, para persistência remota, integração externa e recurso nativo do aparelho.</li>
+</ol>
+
+<h2>4. Público-alvo e personas</h2>
+<p><b>Público-alvo:</b> pequenas barbearias e profissionais autônomos com agenda de atendimento por horário, e seus clientes.</p>
+
+<div class="persona">
+  <b>Persona 1 — Carlos, o dono (barbeiro)</b><br>
+  <b>Perfil:</b> 38 anos, dono de uma barbearia de bairro, pouco tempo para tarefas administrativas.<br>
+  <b>Objetivos:</b> ver a agenda do dia rapidamente, evitar marcar dois clientes no mesmo horário e cancelar/reorganizar quando alguém falta.<br>
+  <b>Dores:</b> confusão em anotações manuais; esquecimento de compromissos.<br>
+  <b>Necessidades na aplicação:</b> visão clara da lista, status dos atendimentos e permissão para cancelar a qualquer momento.
+</div>
+<div class="persona">
+  <b>Persona 2 — Ana, a cliente</b><br>
+  <b>Perfil:</b> 27 anos, usa o celular para tudo, valoriza praticidade.<br>
+  <b>Objetivos:</b> marcar um horário em poucos toques e cancelar com facilidade se precisar.<br>
+  <b>Dores:</b> depender de ligações/mensagens para agendar; esquecer o horário marcado.<br>
+  <b>Necessidades na aplicação:</b> seleção visual de data/hora, confirmação da marcação e regra de cancelamento com prazo (até 2h antes).
+</div>
+
+<h2>5. Requisitos funcionais e não funcionais priorizados</h2>
+<h3>5.1 Requisitos funcionais (RF)</h3>
+<p>Priorização por importância: <span class="tag ess">Essencial</span>, <span class="tag imp">Importante</span>, <span class="tag des">Desejável</span>. A coluna “Situação” indica o estado na entrega da N1.</p>
+<table class="t">
+  <tr><th>ID</th><th>Requisito</th><th>Perfil</th><th>Prioridade</th><th>Situação N1</th></tr>
+  <tr><td>RF01</td><td>Autenticar usuário com login e senha.</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF02</td><td>Manter a sessão do usuário (permanecer autenticado).</td><td>Ambos</td><td><span class="imp">Importante</span></td><td>Implementado</td></tr>
+  <tr><td>RF03</td><td>Encerrar sessão (“Sair”).</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF04</td><td>Listar agendamentos ordenados por data e hora.</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF05</td><td>Buscar agendamentos por nome do cliente.</td><td>Ambos</td><td><span class="imp">Importante</span></td><td>Implementado</td></tr>
+  <tr><td>RF06</td><td>Cadastrar agendamento (cliente, telefone, serviço, data/hora, observação).</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF07</td><td>Selecionar data por calendário nativo.</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF08</td><td>Selecionar hora por relógio nativo.</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF09</td><td>Validar campos obrigatórios antes de salvar.</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF10</td><td>Impedir agendamento em horário já ocupado (conflito).</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF11</td><td>Exigir antecedência mínima de 1 hora.</td><td>Ambos</td><td><span class="imp">Importante</span></td><td>Implementado</td></tr>
+  <tr><td>RF12</td><td>Exibir o detalhe completo de um agendamento.</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Implementado</td></tr>
+  <tr><td>RF13</td><td>Marcar agendamento como concluído.</td><td>Dono</td><td><span class="imp">Importante</span></td><td>Implementado</td></tr>
+  <tr><td>RF14</td><td>Cancelar agendamento respeitando a regra por perfil.</td><td>Ambos</td><td><span class="imp">Importante</span></td><td>Implementado</td></tr>
+  <tr><td>RF15</td><td>Indicar status (Confirmado, Atrasado, Cancelado, Concluído).</td><td>Ambos</td><td><span class="imp">Importante</span></td><td>Implementado</td></tr>
+  <tr><td>RF16</td><td>Exibir estado de lista vazia / busca sem resultado.</td><td>Ambos</td><td><span class="des">Desejável</span></td><td>Implementado</td></tr>
+  <tr><td>RF17</td><td>Cadastrar e gerenciar usuários pela interface.</td><td>Dono</td><td><span class="imp">Importante</span></td><td>Previsto N2</td></tr>
+  <tr><td>RF18</td><td>Sincronizar agendamentos com serviço de retaguarda.</td><td>Ambos</td><td><span class="ess">Essencial</span></td><td>Previsto N2</td></tr>
+  <tr><td>RF19</td><td>Consultar serviço/interface externa pertinente ao domínio.</td><td>Ambos</td><td><span class="des">Desejável</span></td><td>Previsto N2</td></tr>
+  <tr><td>RF20</td><td>Notificar/lembrar o cliente do horário marcado.</td><td>Cliente</td><td><span class="des">Desejável</span></td><td>Previsto N2</td></tr>
+  <tr><td>RF21</td><td>Exibir visão consolidada (resumo/indicador de atendimentos).</td><td>Dono</td><td><span class="imp">Importante</span></td><td>Previsto N2</td></tr>
+</table>
+
+<h3>5.2 Requisitos não funcionais (RNF)</h3>
+<table class="t">
+  <tr><th>ID</th><th>Requisito não funcional</th><th>Prioridade</th></tr>
+  <tr><td>RNF01</td><td>Usabilidade: seguir as heurísticas de usabilidade e os componentes do Material Design 3.</td><td><span class="ess">Essencial</span></td></tr>
+  <tr><td>RNF02</td><td>Acessibilidade: contraste adequado, áreas de toque ≥ 48&nbsp;dp e rótulos para leitores de tela.</td><td><span class="ess">Essencial</span></td></tr>
+  <tr><td>RNF03</td><td>Desempenho: listas com RecyclerView; operações de banco fora da thread principal.</td><td><span class="ess">Essencial</span></td></tr>
+  <tr><td>RNF04</td><td>Estabilidade: uso de View Binding (sem findViewById) e preservação de estado no ciclo de vida.</td><td><span class="ess">Essencial</span></td></tr>
+  <tr><td>RNF05</td><td>Segurança: ausência de credenciais reais no código; dados de sessão isolados no dispositivo.</td><td><span class="imp">Importante</span></td></tr>
+  <tr><td>RNF06</td><td>Portabilidade: compatibilidade com Android 7.0+ (minSdk 24) e target/compileSdk 35.</td><td><span class="imp">Importante</span></td></tr>
+  <tr><td>RNF07</td><td>Manutenibilidade: organização em camadas, nomenclatura consistente e código limpo.</td><td><span class="ess">Essencial</span></td></tr>
+  <tr><td>RNF08</td><td>Disponibilidade offline: operar sem conectividade (persistência local).</td><td><span class="ess">Essencial</span></td></tr>
+  <tr><td>RNF09</td><td>Internacionalização: textos externalizados (<i>strings.xml</i>), idioma pt-BR.</td><td><span class="des">Desejável</span></td></tr>
+  <tr><td>RNF10</td><td>Tema claro e escuro automático (<i>DayNight</i>).</td><td><span class="des">Desejável</span></td></tr>
+</table>
+
+<h2>6. Regras de negócio</h2>
+<table class="t">
+  <tr><th>ID</th><th>Regra</th><th>Comportamento esperado</th><th>Verificável em</th></tr>
+  <tr><td>RN01</td><td>Não permitir conflito de horário</td><td>Ao salvar, se já existir um agendamento <i>Confirmado</i> no mesmo dia e hora, a operação é bloqueada e o usuário é avisado.</td><td>Tela de novo agendamento</td></tr>
+  <tr><td>RN02</td><td>Antecedência mínima de 1 hora</td><td>Agendamentos só podem ser criados para, no mínimo, 1 hora após o momento atual.</td><td>Tela de novo agendamento</td></tr>
+  <tr><td>RN03</td><td>Prazo de cancelamento por perfil</td><td>O <b>cliente</b> só cancela até 2 horas antes do horário; o <b>dono</b> cancela a qualquer momento. Agendamentos concluídos/cancelados não podem ser alterados.</td><td>Tela de detalhe</td></tr>
+  <tr><td>RN04</td><td>Validação de dados de entrada</td><td>Nome do cliente e serviço obrigatórios; telefone com no mínimo 8 dígitos; data e hora obrigatórias.</td><td>Telas de login e cadastro</td></tr>
+  <tr><td>RN05</td><td>Exclusão lógica</td><td>Cancelar ou concluir altera o <i>status</i> do agendamento; o registro é preservado para histórico.</td><td>Telas de agenda e detalhe</td></tr>
+</table>
+<div class="nota">As regras RN01, RN02 e RN03 são implementadas na camada de negócio (<i>RegrasNegocio</i>) e cobrem o mínimo de três regras não triviais exigido no R4 do Documento Norteador.</div>
+
+<h2>7. Modelagem de dados e diagramas</h2>
+<p>O modelo possui duas entidades principais: <b>Usuario</b> (id, nome, login, senha, perfil) e <b>Agendamento</b> (id, cliente, telefone, serviço, dataHora, observação, status, criadoPor). O relacionamento é <b>Usuario (1) — realiza — (N) Agendamento</b>, com vínculo lógico pelo campo <i>criadoPor</i> (login do usuário).</p>
+<div class="fig">
+  <img src="img/der.png" alt="Diagrama Entidade-Relacionamento do BarberAgenda">
+  <p class="legenda">Figura 1 — Modelo Entidade-Relacionamento (banco local barberagenda.db).</p>
+</div>
+<p>O dicionário de dados completo e as decisões de modelagem constam no memorial técnico “Modelagem de Dados e Arquitetura” (artefato complementar da N1).</p>
+
+<h2>8. Definição arquitetural e pilha tecnológica</h2>
+<p>A aplicação adota <b>arquitetura em camadas</b>: Apresentação (UI) → Negócio → Dados → Persistência, isolando a interface do acesso aos dados e centralizando as regras de negócio.</p>
+<div class="fig">
+  <img src="img/arquitetura.png" alt="Arquitetura em camadas do BarberAgenda">
+  <p class="legenda">Figura 2 — Arquitetura em camadas (UI, Negócio, Dados e Persistência).</p>
+</div>
+<table class="t">
+  <tr><th>Camada / Tecnologia</th><th>Responsabilidade e justificativa</th></tr>
+  <tr><td>Apresentação — Activities, layouts XML, View Binding, Material 3</td><td>Interface responsiva (ConstraintLayout) e componentes Material 3; View Binding elimina <i>findViewById</i> e reduz crashes.</td></tr>
+  <tr><td>Negócio — <i>RegrasNegocio</i></td><td>Validações e regras (conflito, antecedência, cancelamento), retornando <i>null</i> quando a operação é permitida.</td></tr>
+  <tr><td>Dados — <i>AgendamentoRepository</i>, <i>Sessao</i>, DAOs e models</td><td>Mediação, execução assíncrona e sessão; mantém a UI alheia ao banco.</td></tr>
+  <tr><td>Persistência — Room / SQLite</td><td>Armazenamento local estruturado, com consultas verificadas em compilação e <i>LiveData</i>.</td></tr>
+</table>
+<p><b>Justificativa da pilha:</b> Android nativo em <b>Java</b> (alinhamento ao conteúdo da disciplina), <b>Room/SQLite</b> para persistência local, <b>Material Design 3</b>, <b>ConstraintLayout</b>, <b>RecyclerView</b> e <b>Gradle/KSP</b>. Detalhamento e alternativas descartadas no memorial de modelagem e arquitetura.</p>
+
+<h3>8.1 Telas da aplicação</h3>
+<div class="fig">
+  <img src="img/telas.png" alt="Telas do BarberAgenda: Login, Agenda, Novo agendamento e Detalhe">
+  <p class="legenda">Figura 3 — Telas do protótipo: Login, Agenda, Novo agendamento e Detalhe do agendamento.</p>
+</div>
+
+<h2>9. Cronograma interno e distribuição de responsabilidades</h2>
+<p>Cronograma do primeiro ciclo (concepção e Ciclo 1), alinhado ao Documento Norteador:</p>
+<table class="t">
+  <tr><th>Semana</th><th>Atividade</th><th>Responsável</th><th>Entregável</th></tr>
+  <tr><td>5 (31/08–04/09)</td><td>Modelagem de dados, arquitetura e repositório</td><td>(preencher)</td><td>DER + memorial arquitetural</td></tr>
+  <tr><td>6 (08–11/09)</td><td>Protótipo navegável e backlog; Checkpoint 1</td><td>(preencher)</td><td>Protótipo + backlog priorizado</td></tr>
+  <tr><td>7 (14–18/09)</td><td>Estrutura em camadas, navegação e autenticação</td><td>(preencher)</td><td>Login + navegação</td></tr>
+  <tr><td>8 (21–25/09)</td><td>Módulo de agendamento e persistência local; revisão</td><td>(preencher)</td><td>CRUD de agendamento + Room</td></tr>
+  <tr><td>9 (28/09–02/10)</td><td>Entrega e apresentação da N1</td><td>Equipe</td><td>Artefatos da N1</td></tr>
+</table>
+<p><b>Atribuição técnica por integrante:</b> ver tabela da capa. A distribuição será atualizada ao término de cada ciclo, conforme o Apêndice B do Documento Norteador.</p>
+
+<h2>10. Escopo entregue na N1 e evolução para a N2</h2>
+<p><b>Entregue na N1:</b> navegação estruturada, autenticação com dois perfis, cadastro/consulta/alteração de agendamentos com persistência local, listagem com busca, regras de negócio (conflito, antecedência e cancelamento) e recursos nativos de data/hora.</p>
+<p><b>Previsto para a N2:</b> ampliação para 6+ telas (R1), cadastro de usuários pela interface e exclusão (R3), persistência remota com sincronização (R6), integração com API externa (R7), uso de recurso nativo do dispositivo como câmera/notificação (R8), visão consolidada de dados (R9), geração de pacote instalável testado em dispositivo físico (R14) e relatório de testes.</p>
+
+<h2>11. Referências</h2>
+<ul>
+  <li>Documento Norteador — Projeto Integrador ADS 2026/2. PUC Goiás, versão 2.0.</li>
+  <li>Android Developers — <i>Room Persistence Library</i>, <i>View Binding</i>, <i>ConstraintLayout</i>, <i>RecyclerView</i>, <i>Activity lifecycle</i>.</li>
+  <li>Material Design 3 — componentes, temas e diretrizes de acessibilidade.</li>
+  <li>NIELSEN, J. <i>10 Usability Heuristics for User Interface Design</i>.</li>
+</ul>
+
+</body>
+</html>

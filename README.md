@@ -59,8 +59,13 @@ A aplicação vem com dois perfis de acesso **pré‑carregados** no banco local
 
 | Perfil | Login (exemplo) | Senha (exemplo) |
 |--------|-----------------|-----------------|
+<<<<<<< HEAD
 | **Dono** | `carlos` | `123` |
 | **Cliente** | `ana` | `123` |
+=======
+| **Dono** | `demo.dono@barber.com` | `demo123` |
+| **Cliente** | `demo.cliente@barber.com` | `demo456` |
+>>>>>>> 2dfd45fc015ddfc7418bd81dcbf71d9c5b7c9a5e
 
 > **Nota:** As credenciais exatas são lidas de `BuildConfig.DEMO_DONO_LOGIN/SENHA` e `BuildConfig.DEMO_CLIENTE_LOGIN/SENHA`. Se necessário, consulte `app/data/AppDatabase.java` para ajustar os dados de teste.
 
