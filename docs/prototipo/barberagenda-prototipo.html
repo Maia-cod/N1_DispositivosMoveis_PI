@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protótipo Navegável — BarberAgenda (N1)</title>
+<style>
+  :root{
+    --primary:#6750A4; --on-primary:#FFFFFF;
+    --primary-container:#EADDFF; --on-primary-container:#21005D;
+    --surface:#FEF7FF; --surface-variant:#E7E0EC;
+    --on-surface:#1C1B1F; --on-surface-variant:#49454F;
+    --outline:#79747E; --outline-variant:#CAC4D0;
+    --error:#B3261E; --success:#146C2E; --warn:#B26A00;
+    --scrim:rgba(0,0,0,.45);
+    --shadow:0 1px 3px rgba(0,0,0,.16),0 1px 2px rgba(0,0,0,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;font-family:Roboto,"Segoe UI",Arial,sans-serif;color:var(--on-surface)}
+  body{background:#ece6f0;min-height:100vh;display:flex;gap:28px;justify-content:center;padding:28px 20px}
+
+  /* ---------- painel lateral ---------- */
+  .side{width:300px;flex:0 0 auto}
+  .side h1{font-size:18px;margin:0 0 4px;color:#4f378b}
+  .side .sub{font-size:12.5px;color:#49454f;margin:0 0 16px;line-height:1.45}
+  .side .grp{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:14px}
+  .side .grp h2{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:#6750a4;margin:0 0 10px}
+  .navbtn{display:flex;width:100%;align-items:center;gap:10px;border:1px solid var(--outline-variant);background:#fff;color:var(--on-surface);border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:13.5px;cursor:pointer;text-align:left;transition:.15s}
+  .navbtn:hover{background:#f3edf7;border-color:var(--primary)}
+  .navbtn.active{background:var(--primary-container);border-color:var(--primary);color:var(--on-primary-container);font-weight:600}
+  .navbtn .n{display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;align-items:center;justify-content:center;flex:0 0 auto}
+  .hint{font-size:12px;color:#49454f;line-height:1.5;margin:0}
+  .hint b{color:#4f378b}
+
+  /* ---------- celular ---------- */
+  .phone{position:relative;width:390px;height:844px;flex:0 0 auto;background:#fff;border:11px solid #1c1b1f;border-radius:44px;box-shadow:0 18px 50px rgba(0,0,0,.28);overflow:hidden}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#1c1b1f;border-radius:0 0 16px 16px;z-index:60}
+  .status{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:12px;font-weight:600;color:#1c1b1f;background:var(--surface);z-index:50;position:relative}
+  .viewport{position:absolute;top:30px;left:0;right:0;bottom:0;background:var(--surface)}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--surface);overflow:hidden}
+  .screen.on{display:flex}
+
+  /* ---------- app bar ---------- */
+  .appbar{height:56px;display:flex;align-items:center;gap:12px;padding:0 8px 0 6px;background:var(--surface);color:var(--on-surface)}
+  .appbar .title{font-size:19px;font-weight:600;flex:1}
+  .iconbtn{width:44px;height:44px;border:none;background:transparent;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--on-surface-variant)}
+  .iconbtn:hover{background:rgba(28,27,31,.08)}
+  .iconbtn svg{width:24px;height:24px;fill:currentColor}
+
+  /* ---------- conteúdo ---------- */
+  .content{flex:1;overflow-y:auto;padding:8px 16px 96px}
+  .content.center{display:flex;flex-direction:column;justify-content:center;padding:24px}
+
+  /* ---------- campos ---------- */
+  .field{position:relative;margin-bottom:14px}
+  .field label{position:absolute;top:-8px;left:12px;background:var(--surface);padding:0 5px;font-size:11.5px;color:var(--primary);font-weight:600}
+  .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--outline);border-radius:8px;background:var(--surface);padding:14px;font-size:15px;font-family:inherit;color:var(--on-surface);outline:none}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+  .field.plain label{display:none}
+  .field .icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--on-surface-variant)}
+  .field.err input{border-color:var(--error)}
+  .field .msg{color:var(--error);font-size:12px;margin:4px 0 0 14px;display:none}
+  .field.err .msg{display:block}
+  select{appearance:none}
+  .chev{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--on-surface-variant);pointer-events:none}
+
+  /* ---------- botões ---------- */
+  .btn{width:100%;border:none;border-radius:100px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:.15s}
+  .btn.filled{background:var(--primary);color:var(--on-primary)}
+  .btn.filled:hover{filter:brightness(1.08)}
+  .btn.outlined{background:transparent;color:var(--primary);border:1.5px solid var(--outline)}
+  .btn.outlined:hover{background:rgba(103,80,164,.08)}
+  .btn.text{background:transparent;color:var(--primary);padding:12px}
+  .btn.text:hover{background:rgba(103,80,164,.08)}
+  .btn.danger{color:var(--error);border-color:var(--error)}
+  .btn.danger:hover{background:rgba(179,38,30,.08)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .row .minibtn{flex:0 0 auto;border:1.5px solid var(--outline);background:transparent;color:var(--primary);border-radius:100px;padding:10px 16px;font-size:13.5px;font-weight:600;cursor:pointer}
+  .row .minibtn:hover{background:rgba(103,80,164,.08)}
+  .row .val{flex:1;color:var(--on-surface-variant);font-size:15px}
+
+  /* ---------- login específico ---------- */
+  .logo{width:96px;height:96px;border-radius:50%;background:var(--primary-container);display:flex;align-items:center;justify-content:center;margin:0 auto 22px}
+  .logo svg{width:52px;height:52px;fill:var(--primary)}
+  .brand{text-align:center;font-size:26px;font-weight:700;color:#4f378b;margin-bottom:6px}
+  .brand-sub{text-align:center;font-size:13px;color:var(--on-surface-variant);margin-bottom:28px}
+  .hintline{text-align:center;font-size:12.5px;color:var(--on-surface-variant);margin-top:16px}
+
+  /* ---------- lista ---------- */
+  .search{position:relative;margin:8px 0 12px}
+  .search input{width:100%;border:1.5px solid var(--outline);border-radius:100px;padding:12px 14px 12px 44px;font-size:14px;background:var(--surface);outline:none}
+  .search input:focus{border-color:var(--primary)}
+  .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;fill:var(--on-surface-variant)}
+  .card{background:#fff;border:1px solid #eee;border-radius:16px;padding:14px 16px;margin-bottom:12px;cursor:pointer;box-shadow:var(--shadow);position:relative;transition:.15s}
+  .card:hover{box-shadow:0 3px 10px rgba(103,80,164,.22);border-color:var(--primary-container)}
+  .card .line1{display:flex;justify-content:space-between;align-items:flex-start}
+  .card .cli{font-size:17px;font-weight:700}
+  .card .hora{font-size:17px;font-weight:700;color:var(--primary)}
+  .card .serv{font-size:14px;color:var(--on-surface-variant);margin-top:2px}
+  .card .data{font-size:13px;color:var(--on-surface-variant);text-align:right;margin-top:2px;opacity:.9}
+  .card .status{font-size:12px;font-weight:700;margin-top:8px;letter-spacing:.3px}
+  .st-conf{color:var(--primary)} .st-atr{color:var(--error)} .st-con{color:var(--success)} .st-canc{color:var(--outline)}
+  .empty{display:none;text-align:center;color:var(--on-surface-variant);font-size:15px;margin-top:40px}
+  .empty.on{display:block}
+  .fab{position:absolute;right:18px;bottom:22px;width:60px;height:60px;border-radius:18px;border:none;background:var(--primary-container);color:var(--on-primary-container);box-shadow:0 6px 14px rgba(103,80,164,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20}
+  .fab:hover{filter:brightness(.97)}
+  .fab svg{width:28px;height:28px;fill:currentColor}
+
+  /* ---------- detalhe ---------- */
+  .lbl{font-size:12px;color:var(--on-surface-variant);opacity:.85;margin-top:16px}
+  .valtxt{font-size:16px;margin-top:2px}
+  .valtxt.big{font-size:24px;font-weight:600}
+  .divline{height:1px;background:var(--outline-variant);margin:20px 0 4px}
+
+  /* ---------- snackbar ---------- */
+  .snackbar{position:absolute;left:16px;right:16px;bottom:88px;background:#322F35;color:#F5EFF7;border-radius:8px;padding:14px 16px;font-size:13.5px;display:none;z-index:40;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+  .snackbar.on{display:block}
+
+  /* ---------- modais ---------- */
+  .scrim{position:absolute;inset:0;background:var(--scrim);display:none;align-items:center;justify-content:center;z-index:70}
+  .scrim.on{display:flex}
+  .dialog{background:#fff;border-radius:28px;padding:24px;width:300px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
+  .dialog h3{margin:0 0 12px;font-size:19px;color:#1c1b1f}
+  .dialog p{margin:0 0 22px;font-size:14px;color:var(--on-surface-variant);line-height:1.5}
+  .dialog .actions{display:flex;justify-content:flex-end;gap:8px}
+  .dialog .actions button{border:none;background:transparent;color:var(--primary);font-weight:600;font-size:14px;padding:10px 14px;border-radius:100px;cursor:pointer}
+  .dialog .actions button:hover{background:rgba(103,80,164,.08)}
+  .picker{background:#fff;border-radius:28px;width:330px;box-shadow:0 8px 28px rgba(0,0,0,.35);overflow:hidden}
+  .picker .ph{background:var(--primary);color:#fff;padding:16px 20px}
+  .picker .ph label{font-size:12px;opacity:.85;display:block}
+  .picker .ph .big{font-size:26px;font-weight:600;margin-top:2px}
+  .picker .body{padding:12px 16px 4px}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+  .cal .wd{text-align:center;font-size:11px;color:var(--on-surface-variant);padding:6px 0}
+  .cal .d{text-align:center;font-size:13px;padding:9px 0;border-radius:50%;cursor:pointer}
+  .cal .d:hover{background:var(--surface-variant)}
+  .cal .d.sel{background:var(--primary);color:#fff}
+  .cal .d.mut{color:var(--outline-variant);cursor:default}
+  .cal .d.mut:hover{background:none}
+  .pactions{display:flex;justify-content:flex-end;gap:8px;padding:8px 12px 16px}
+  .pactions button{border:none;background:transparent;color:var(--primary);font-weight:600;font-size:14px;padding:10px 14px;border-radius:100px;cursor:pointer}
+  .pactions button:hover{background:rgba(103,80,164,.08)}
+  .time-row{display:flex;gap:10px;padding-top:6px}
+  .time-row .field{flex:1;margin-bottom:0}
+  .menu{position:absolute;top:60px;right:12px;background:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.28);display:none;z-index:55;min-width:150px;overflow:hidden}
+  .menu.on{display:block}
+  .menu button{display:block;width:100%;border:none;background:transparent;text-align:left;padding:14px 18px;font-size:14px;cursor:pointer;color:var(--on-surface)}
+  .menu button:hover{background:var(--surface-variant)}
+
+  .footnote{max-width:390px;margin-top:14px;font-size:11.5px;color:#49454f;text-align:center}
+
+  /* modo solo: só o celular, ideal para capturas */
+  body.solo{background:#fff;padding:12px}
+  body.solo .side,body.solo .footnote{display:none}
+</style>
+</head>
+<body>
+
+<aside class="side">
+  <h1>Protótipo Navegável</h1>
+  <p class="sub"><b>BarberAgenda</b> — Projeto Integrador ADS 2026/2 · Etapa N1.<br>Protótipo de alta fidelidade, clicável, com telas em Material Design 3.</p>
+
+  <div class="grp">
+    <h2>Ir direto para a tela</h2>
+    <button class="navbtn" data-go="login" onclick="irPara('login')"><span class="n">1</span> Login / Autenticação</button>
+    <button class="navbtn" data-go="agenda" onclick="irPara('agenda')"><span class="n">2</span> Agenda do dia</button>
+    <button class="navbtn" data-go="cadastro" onclick="irPara('cadastro')"><span class="n">3</span> Novo agendamento</button>
+    <button class="navbtn" data-go="detalhe" onclick="irPara('detalhe')"><span class="n">4</span> Detalhe do agendamento</button>
+  </div>
+
+  <div class="grp">
+    <h2>Como navegar</h2>
+    <p class="hint">
+      • <b>Entrar</b> → vai para a Agenda.<br>
+      • Toque num <b>card</b> da lista → abre o Detalhe.<br>
+      • Botão <b>+</b> (canto inferior direito) → Novo agendamento.<br>
+      • <b>Escolher data/hora</b> → abre os seletores.<br>
+      • <b>Cancelar agendamento</b> → diálogo de confirmação.<br>
+      • Menu <b>⋮</b> na Agenda → Sair.
+    </p>
+  </div>
+
+  <div class="grp">
+    <h2>Fluxo principal</h2>
+    <p class="hint">Login → Agenda → Novo agendamento → Agenda → Detalhe → Cancelar/Concluir.</p>
+  </div>
+</aside>
+
+<main>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status"><span>09:41</span><span>BarberAgenda</span></div>
+  <div class="viewport">
+
+    <!-- ================= LOGIN ================= -->
+    <section class="screen on" id="s-login">
+      <div class="content center">
+        <div class="logo">
+          <svg viewBox="0 0 24 24"><path d="M7.5 3A4.5 4.5 0 0 0 6 11.7L8.1 10a2 2 0 1 1 2.8 0L13 12.15 18.9 18a1.7 1.7 0 0 1-2.4 2.4L11.5 15.4 9.4 17.5A4.5 4.5 0 1 0 8.4 9.9a4.5 4.5 0 0 0 1.1.1L7.5 12 3.6 8.1A4.5 4.5 0 0 0 7.5 3Zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Zm9 9.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg>
+        </div>
+        <div class="brand">BarberAgenda</div>
+        <div class="brand-sub">Sua barbearia organizada, sem conflitos de horário.</div>
+
+        <div class="field" id="f-login">
+          <label>Login</label>
+          <input id="in-login" type="text" value="ana" autocomplete="username" aria-label="Login">
+          <div class="msg">Informe o login</div>
+        </div>
+        <div class="field" id="f-senha">
+          <label>Senha</label>
+          <input id="in-senha" type="password" value="123" autocomplete="current-password" aria-label="Senha">
+          <span class="icon" onclick="toggleSenha()" style="cursor:pointer" title="Mostrar/ocultar senha">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path fill="#49454f" d="M12 5C7 5 2.7 8.1 1 12c1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg>
+          </span>
+          <div class="msg">Informe a senha</div>
+        </div>
+
+        <button class="btn filled" onclick="entrar()">Entrar</button>
+        <div class="hintline">Dono: <b>carlos / 123</b> &nbsp;·&nbsp; Cliente: <b>ana / 123</b></div>
+      </div>
+    </section>
+
+    <!-- ================= AGENDA ================= -->
+    <section class="screen" id="s-agenda">
+      <div class="appbar">
+        <div class="title" id="agenda-titulo">Agenda</div>
+        <button class="iconbtn" onclick="toggleMenu(event)" aria-label="Mais opções">
+          <svg viewBox="0 0 24 24"><path d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>
+        </button>
+        <div class="menu" id="menu-agenda">
+          <button onclick="sair()">Sair</button>
+        </div>
+      </div>
+
+      <div class="content" id="agenda-content">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3a6.5 6.5 0 1 0-.7.7l.3.3v.8l5 5 1.5-1.5-5-5Zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14Z"/></svg>
+          <input id="busca" type="text" placeholder="Buscar por nome do cliente" oninput="filtrar(this.value)" aria-label="Buscar por nome do cliente">
+        </div>
+
+        <div id="lista"></div>
+        <div class="empty" id="vazio">Nenhum agendamento encontrado.</div>
+      </div>
+
+      <button class="fab" onclick="irPara('cadastro')" aria-label="Novo agendamento">
+        <svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z"/></svg>
+      </button>
+    </section>
+
+    <!-- ================= CADASTRO ================= -->
+    <section class="screen" id="s-cadastro">
+      <div class="appbar">
+        <button class="iconbtn" onclick="irPara('agenda')" aria-label="Voltar">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20v-2Z"/></svg>
+        </button>
+        <div class="title">Novo agendamento</div>
+      </div>
+
+      <div class="content">
+        <div class="field" id="f-cli">
+          <label>Nome do cliente</label>
+          <input id="in-cli" type="text" placeholder="Ex.: Maria Silva" aria-label="Nome do cliente">
+          <div class="msg">Informe o nome do cliente</div>
+        </div>
+        <div class="field" id="f-tel">
+          <label>Telefone</label>
+          <input id="in-tel" type="tel" placeholder="(62) 99999-0000" aria-label="Telefone">
+          <div class="msg">Telefone deve ter pelo menos 8 dígitos</div>
+        </div>
+        <div class="field">
+          <label>Serviço</label>
+          <select id="in-serv" aria-label="Serviço">
+            <option value="">Selecione...</option>
+            <option>Corte</option><option>Barba</option><option>Corte + Barba</option>
+            <option>Escova</option><option>Platinado</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" width="20" height="20"><path fill="#49454f" d="m7 10 5 5 5-5H7Z"/></svg>
+        </div>
+
+        <div class="row">
+          <button class="minibtn" onclick="abrirData()">Escolher data</button>
+          <span class="val" id="val-data">Data não definida</span>
+        </div>
+        <div class="row">
+          <button class="minibtn" onclick="abrirHora()">Escolher hora</button>
+          <span class="val" id="val-hora">Hora não definida</span>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label>Observação (opcional)</label>
+          <textarea rows="2" placeholder="Ex.: cliente prefere máquina 2" aria-label="Observação"></textarea>
+        </div>
+
+        <button class="btn filled" style="margin-top:10px" onclick="salvar()">Salvar agendamento</button>
+        <button class="btn text" onclick="irPara('agenda')">Cancelar</button>
+      </div>
+    </section>
+
+    <!-- ================= DETALHE ================= -->
+    <section class="screen" id="s-detalhe">
+      <div class="appbar">
+        <button class="iconbtn" onclick="irPara('agenda')" aria-label="Voltar">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20v-2Z"/></svg>
+        </button>
+        <div class="title">Detalhe do agendamento</div>
+      </div>
+      <div class="content">
+        <div class="lbl">Cliente</div>
+        <div class="valtxt big" id="d-cli">Ana Souza</div>
+
+        <div class="lbl">Telefone</div>
+        <div class="valtxt" id="d-tel">(62) 99876-1234</div>
+
+        <div class="lbl">Serviço</div>
+        <div class="valtxt" id="d-serv">Corte</div>
+
+        <div class="lbl">Data e hora</div>
+        <div class="valtxt" id="d-data">12/10/2026 às 14:00</div>
+
+        <div class="lbl">Observação</div>
+        <div class="valtxt" id="d-obs">Sem observações.</div>
+
+        <div class="lbl">Status</div>
+        <div class="valtxt" id="d-status" style="font-weight:600;color:var(--primary)">Confirmado</div>
+
+        <div class="divline"></div>
+        <button class="btn outlined" style="margin-top:14px" onclick="concluir()">Marcar como concluído</button>
+        <button class="btn outlined danger" style="margin-top:10px" onclick="abrirCancelar()">Cancelar agendamento</button>
+      </div>
+    </section>
+
+    <!-- ================= COMPONENTES SOBREPOSTOS ================= -->
+    <div class="snackbar" id="snack"></div>
+
+    <!-- Date picker -->
+    <div class="scrim" id="scrim-data">
+      <div class="picker">
+        <div class="ph"><label>Selecionar data</label><div class="big" id="dp-sel">12/10/2026</div></div>
+        <div class="body">
+          <div style="text-align:center;font-size:13px;color:var(--on-surface-variant);margin:6px 0">Outubro de 2026</div>
+          <div class="cal" id="cal"></div>
+        </div>
+        <div class="pactions"><button onclick="fecharData()">Cancelar</button><button onclick="confirmarData()">OK</button></div>
+      </div>
+    </div>
+
+    <!-- Time picker -->
+    <div class="scrim" id="scrim-hora">
+      <div class="picker" style="width:300px">
+        <div class="ph"><label>Selecionar hora</label><div class="big" id="tp-sel">09:00</div></div>
+        <div class="body">
+          <div class="time-row">
+            <div class="field plain"><label>Hora</label><input id="tp-h" type="number" min="0" max="23" value="9" oninput="atualizarHora()" aria-label="Hora"></div>
+            <div class="field plain"><label>Minuto</label><input id="tp-m" type="number" min="0" max="59" value="0" step="5" oninput="atualizarHora()" aria-label="Minuto"></div>
+          </div>
+        </div>
+        <div class="pactions"><button onclick="fecharHora()">Cancelar</button><button onclick="confirmarHora()">OK</button></div>
+      </div>
+    </div>
+
+    <!-- Confirmar cancelamento -->
+    <div class="scrim" id="scrim-cancel">
+      <div class="dialog">
+        <h3>Cancelar agendamento</h3>
+        <p>Deseja cancelar este agendamento? Esta ação altera o status para “Cancelado”.</p>
+        <div class="actions">
+          <button onclick="fecharCancelar()">Não</button>
+          <button onclick="confirmarCancelamento()">Sim</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="footnote">Protótipo ilustrativo — os dados exibidos são de exemplo. Replicado a partir das telas reais do app.</div>
+</main>
+
+<script>
+  var agendamentos = [
+    {cli:"Ana Souza", serv:"Corte", hora:"14:00", data:"12/10/2026", status:"Confirmado", tel:"(62) 99876-1234", obs:"Cliente prefere máquina 2.", cls:"st-conf"},
+    {cli:"Bruno Lima", serv:"Barba", hora:"15:30", data:"12/10/2026", status:"Confirmado", tel:"(62) 99110-2020", obs:"Sem observações.", cls:"st-conf"},
+    {cli:"Carla Dias", serv:"Corte + Barba", hora:"09:00", data:"10/10/2026", status:"ATRASADO", tel:"(62) 98888-7777", obs:"Sem observações.", cls:"st-atr"},
+    {cli:"Diego Rocha", serv:"Escova", hora:"11:00", data:"08/10/2026", status:"Cancelado", tel:"(62) 97777-6666", obs:"Sem observações.", cls:"st-canc"}
+  ];
+
+  function irPara(id){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
+    document.getElementById('s-'+id).classList.add('on');
+    document.querySelectorAll('.navbtn').forEach(function(b){ b.classList.toggle('active', b.dataset.go===id); });
+    fecharMenu();
+    if(id==='agenda'){ setTimeout(function(){ document.getElementById('agenda-titulo').scrollIntoView(); },0); }
+  }
+
+  /* login */
+  function entrar(){
+    var l=document.getElementById('in-login'), s=document.getElementById('in-senha');
+    var ok=true;
+    document.getElementById('f-login').classList.toggle('err', !l.value.trim());
+    document.getElementById('f-senha').classList.toggle('err', !s.value);
+    if(!l.value.trim() || !s.value) ok=false;
+    if(ok){
+      var dono = l.value.trim().toLowerCase()==='carlos';
+      document.getElementById('agenda-titulo').textContent = dono ? 'Agenda — carlos (dono)' : 'Agenda — ana (cliente)';
+      irPara('agenda');
+    }
+  }
+  function toggleSenha(){
+    var s=document.getElementById('in-senha');
+    s.type = s.type==='password' ? 'text' : 'password';
+  }
+
+  /* agenda */
+  function renderLista(filtro){
+    var box=document.getElementById('lista');
+    var f=(filtro||'').toLowerCase();
+    var visiveis=agendamentos.filter(function(a){ return a.cli.toLowerCase().indexOf(f)!==-1; });
+    box.innerHTML = visiveis.map(function(a){
+      return '<div class="card" onclick="abrirDetalhe(\''+a.cli+'\')" role="button" tabindex="0">'
+        + '<div class="line1"><div><div class="cli">'+a.cli+'</div><div class="serv">'+a.serv+'</div></div>'
+        + '<div style="text-align:right"><div class="hora">'+a.hora+'</div><div class="data">'+a.data+'</div></div></div>'
+        + '<div class="status '+a.cls+'">'+a.status.toUpperCase()+'</div></div>';
+    }).join('');
+    document.getElementById('vazio').classList.toggle('on', visiveis.length===0);
+  }
+  function filtrar(v){ renderLista(v); }
+  function abrirDetalhe(cli){
+    var a=agendamentos.filter(function(x){ return x.cli===cli; })[0];
+    document.getElementById('d-cli').textContent=a.cli;
+    document.getElementById('d-tel').textContent=a.tel;
+    document.getElementById('d-serv').textContent=a.serv;
+    document.getElementById('d-data').textContent=a.data+' às '+a.hora;
+    document.getElementById('d-obs').textContent=a.obs;
+    var st=document.getElementById('d-status');
+    st.textContent=a.status;
+    st.style.color = a.cls==='st-atr'?'var(--error)': a.cls==='st-con'?'var(--success)': a.cls==='st-canc'?'var(--outline)':'var(--primary)';
+    irPara('detalhe');
+  }
+  function toggleMenu(e){ e.stopPropagation(); document.getElementById('menu-agenda').classList.toggle('on'); }
+  function fecharMenu(){ document.getElementById('menu-agenda').classList.remove('on'); }
+  document.addEventListener('click', fecharMenu);
+  function sair(){ fecharMenu(); irPara('login'); }
+
+  /* cadastro */
+  var dataSel=null, horaSel=null;
+  function abrirData(){ montarCalendario(); document.getElementById('scrim-data').classList.add('on'); }
+  function fecharData(){ document.getElementById('scrim-data').classList.remove('on'); }
+  function confirmarData(){ dataSel=document.getElementById('dp-sel').textContent; document.getElementById('val-data').textContent=dataSel; fecharData(); }
+  function abrirHora(){ document.getElementById('scrim-hora').classList.add('on'); }
+  function fecharHora(){ document.getElementById('scrim-hora').classList.remove('on'); }
+  function atualizarHora(){
+    var h=Math.max(0,Math.min(23,parseInt(document.getElementById('tp-h').value||0,10)));
+    var m=Math.max(0,Math.min(59,parseInt(document.getElementById('tp-m').value||0,10)));
+    document.getElementById('tp-sel').textContent = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  }
+  function confirmarHora(){ horaSel=document.getElementById('tp-sel').textContent; document.getElementById('val-hora').textContent=horaSel; fecharHora(); }
+  function montarCalendario(){
+    var dias=['D','S','T','Q','Q','S','S'];
+    var html=dias.map(function(d){ return '<div class="wd">'+d+'</div>'; }).join('');
+    // Outubro/2026 começa numa quinta (dow=4). Dias 1..31.
+    var offset=4; // 0=domingo
+    for(var i=0;i<offset;i++){ html+='<div></div>'; }
+    for(var d=1;d<=31;d++){
+      var sel=(d===12)?' sel':'';
+      html+='<div class="d'+sel+'" onclick="escolherDia(this,'+d+')">'+d+'</div>';
+    }
+    document.getElementById('cal').innerHTML=html;
+  }
+  function escolherDia(el,d){
+    document.querySelectorAll('#cal .d').forEach(function(x){ x.classList.remove('sel'); });
+    el.classList.add('sel');
+    document.getElementById('dp-sel').textContent = String(d).padStart(2,'0')+'/10/2026';
+  }
+  function salvar(){
+    var cli=document.getElementById('in-cli'), tel=document.getElementById('in-tel'), serv=document.getElementById('in-serv');
+    var e1=!cli.value.trim(), e2=(tel.value.replace(/\D/g,'').length<8), e3=!serv.value;
+    document.getElementById('f-cli').classList.toggle('err',e1);
+    document.getElementById('f-tel').classList.toggle('err',e2);
+    if(e3){ mostrarSnack('Escolha o serviço'); return; }
+    if(e1||e2){ return; }
+    if(!dataSel){ mostrarSnack('Escolha a data do agendamento'); return; }
+    if(!horaSel){ mostrarSnack('Escolha a hora do agendamento'); return; }
+    agendamentos.push({cli:cli.value.trim(), serv:serv.value, hora:horaSel, data:dataSel, status:'Confirmado', tel:tel.value, obs:'Sem observações.', cls:'st-conf'});
+    renderLista(document.getElementById('busca').value);
+    irPara('agenda');
+    mostrarSnack('Agendamento salvo com sucesso!');
+  }
+
+  /* detalhe */
+  function concluir(){ irPara('agenda'); mostrarSnack('Agendamento concluído.'); }
+  function abrirCancelar(){ document.getElementById('scrim-cancel').classList.add('on'); }
+  function fecharCancelar(){ document.getElementById('scrim-cancel').classList.remove('on'); }
+  function confirmarCancelamento(){
+    var nome=document.getElementById('d-cli').textContent;
+    agendamentos.forEach(function(a){ if(a.cli===nome){ a.status='Cancelado'; a.cls='st-canc'; } });
+    fecharCancelar(); renderLista(document.getElementById('busca').value);
+    irPara('agenda'); mostrarSnack('Agendamento cancelado.');
+  }
+
+  /* snackbar */
+  var snackTimer=null;
+  function mostrarSnack(msg){
+    var s=document.getElementById('snack');
+    s.textContent=msg; s.classList.add('on');
+    clearTimeout(snackTimer);
+    snackTimer=setTimeout(function(){ s.classList.remove('on'); },2600);
+  }
+
+  renderLista('');
+
+  /* deep-link (#login/#agenda/#cadastro/#detalhe) e modo solo (?solo=1) */
+  (function init(){
+    if(new URLSearchParams(location.search).has('solo')){ document.body.classList.add('solo'); }
+    var alvo=location.hash.replace('#','');
+    if(['login','agenda','cadastro','detalhe'].indexOf(alvo)!==-1){ irPara(alvo); }
+  })();
+</script>
+</body>
+</html>

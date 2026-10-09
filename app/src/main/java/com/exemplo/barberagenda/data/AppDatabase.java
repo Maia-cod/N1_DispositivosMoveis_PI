@@ -10,6 +10,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.exemplo.barberagenda.BuildConfig;
 import com.exemplo.barberagenda.data.dao.AgendamentoDao;
 import com.exemplo.barberagenda.data.dao.UsuarioDao;
 import com.exemplo.barberagenda.data.model.Agendamento;
@@ -42,8 +43,10 @@ public abstract class AppDatabase extends RoomDatabase {
     private static class SeedCallback extends Callback {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            inserirUsuario(db, "Carlos (barbeiro)", "carlos", "123", Usuario.PERFIL_DONO);
-            inserirUsuario(db, "Ana", "ana", "123", Usuario.PERFIL_CLIENTE);
+            inserirUsuario(db, "Carlos",
+                    BuildConfig.DEMO_DONO_LOGIN, BuildConfig.DEMO_DONO_SENHA, Usuario.PERFIL_DONO);
+            inserirUsuario(db, "Ana",
+                    BuildConfig.DEMO_CLIENTE_LOGIN, BuildConfig.DEMO_CLIENTE_SENHA, Usuario.PERFIL_CLIENTE);
         }
 
         private void inserirUsuario(SupportSQLiteDatabase db, String nome,

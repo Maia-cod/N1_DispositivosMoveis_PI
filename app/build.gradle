@@ -14,6 +14,12 @@ android {
         targetSdk 35
         versionCode 1
         versionName "1.0"
+
+        // Credenciais de demonstracao (seed). Nao representam segredos reais.
+        buildConfigField "String", "DEMO_DONO_LOGIN", "\"carlos\""
+        buildConfigField "String", "DEMO_DONO_SENHA", "\"123\""
+        buildConfigField "String", "DEMO_CLIENTE_LOGIN", "\"ana\""
+        buildConfigField "String", "DEMO_CLIENTE_SENHA", "\"123\""
     }
 
     buildTypes {
@@ -25,6 +31,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
     compileOptions {

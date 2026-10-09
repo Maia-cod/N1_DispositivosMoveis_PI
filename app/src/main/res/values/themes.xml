@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.BarberAgenda" parent="Theme.Material3.DayNight" />
+    <style name="Theme.BarberAgenda" parent="Theme.Material3.DayNight">
+        <!-- Android 15 (targetSdk 35) forca edge-to-edge: o conteudo passaria por baixo da action bar/status bar.
+             Optamos por sair dessa imposicao para manter o layout classico em todas as telas. -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
 </resources>

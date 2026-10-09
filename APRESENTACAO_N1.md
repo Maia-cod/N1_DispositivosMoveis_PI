@@ -1,6 +1,6 @@
-# Guia de apresentação — N1 (BarberAgenda)
+# Guia de apresentação — N1 (10 minutos)
 
-**Tema em 1 frase:** "App para o cliente marcar horário na barbearia, com agenda do dia e bloqueio de horários já ocupados."
+**Formato pedido pelo professor (MS Teams):** Objetivos → Justificativa → Funcionalidades (protótipos de telas), mostrando o **progresso do app**. Todos os integrantes devem falar.
 
 **Credenciais de teste (já cadastradas no app):**
 - Dono (barbeiro): `carlos / 123` → pode cancelar qualquer agendamento, mesmo em cima da hora.
@@ -8,72 +8,70 @@
 
 ---
 
-## 1. Interface e Layouts Modernos
+## Roteiro de 10 minutos
 
-| O que mostrar | Onde está |
+### 1. Objetivos — o que o app faz (2 min) — Kevin Lucas (coordenador)
+
+**Mostrar:** tela de login (`docs/img/proto_login.png` ou o app aberto).
+
+**Fale:** "O BarberAgenda é um app Android para agendamento de serviços em barbearia. O **cliente** marca horário, consulta a agenda e cancela com prazo; o **dono/barbeiro** gerencia a agenda, conclui atendimentos e cancela quando precisar. A persistência é local, com Room, e a navegação usa Intents entre 4 telas integradas."
+
+Pontos a cobrir em 30 segundos cada:
+- Dois perfis com permissões distintas (dono × cliente).
+- Regras de negócio: sem conflito de horário, antecedência mínima de 1h, cancelamento do cliente só até 2h antes.
+- Stack: Android nativo (Java) + Room + Material Design 3.
+
+### 2. Justificativa — por que é relevante (2 min) — Integrante 4
+
+**Fale:** "Barbearias pequenas ainda marcam horário por telefone ou WhatsApp: o cliente não sabe se o horário está livre, o barbeiro anota em papel e vive tendo conflito de agenda. O app resolve isso com controle centralizado: o cliente escolhe data e hora em seletores nativos, o sistema **bloqueia horário já ocupado** e o dono acompanha tudo em uma lista organizada com status (confirmado, atrasado, cancelado, concluído)."
+
+**Mostrar:** `docs/img/proto_agenda.png` — "esta é a agenda que o dono vê ao abrir o app".
+
+### 3. Funcionalidades — protótipos e progresso do app (5 min) — Felipe Moura, Isabella Batista e Integrante 4
+
+**3a. Protótipos das telas (1,5 min)** — Felipe Moura abre o protótipo navegável (`docs/prototipo/barberagenda-prototipo.html`):
+- Login → Agenda → Novo agendamento → Detalhe.
+- Mostrar `docs/img/telas.png` (visão geral das telas) e destacar: "usamos MaterialCardView nos itens da lista e ConstraintLayout em tudo, então as telas se adaptam a qualquer tamanho de tela".
+
+**3b. Demonstração ao vivo no app (3,5 min)** — seguir o roteiro:
+1. Login como `ana` (cliente) → tela da agenda com lista em RecyclerView.
+2. Botão **+** → **Novo agendamento**: escolher data no **MaterialDatePicker** e hora no **MaterialTimePicker** → salvar.
+3. Testar **conflito**: tentar agendar outro cliente no mesmo dia/hora → mensagem de bloqueio (RN01).
+4. Testar **antecedência**: tentar horário com menos de 1h → bloqueado (RN02).
+5. Abrir o **detalhe** do agendamento → como cliente, cancelamento é permitido só até 2h antes (RN03).
+6. Sair, entrar como `carlos` (dono) → cancelamento liberado a qualquer hora + botão "Concluir".
+7. Usar a **busca** por nome do cliente para filtrar a lista.
+
+**3c. Código e critérios técnicos (1 min)** — Isabella Batista (responsável técnico) mostra rápido no Android Studio:
+
+| Critério avaliado | O que mostrar |
 |---|---|
-| ConstraintLayout em todas as telas | `res/layout/activity_login.xml:2`, `activity_main.xml:2`, `activity_cadastro.xml:10`, `activity_detalhe.xml:10`, `item_agendamento.xml:8` |
-| Tema Material Design 3 | `res/values/themes.xml:3` (parent `Theme.Material3.DayNight`) |
-| MaterialButton | `activity_login.xml` (botaoEntrar:143), `activity_cadastro.xml` (botaoSalvar, botaoData, botaoHora:194) |
-| MaterialCardView (itens da lista) | `res/layout/item_agendamento.xml:2` |
-| TextInputLayout OutlinedBox (campos com erro) | `activity_cadastro.xml` (layoutCliente:12, layoutTelefone:31...) |
+| ConstraintLayout + Material 3 | `res/layout/` — nenhum LinearLayout/RelativeLayout; MaterialCardView em `item_agendamento.xml:2` |
+| View Binding + Lambda, sem findViewById | `MainActivity.java:33` (binding); rodar busca por `findViewById` = **0 ocorrências**; listener em lambda em `MainActivity.java:48` |
+| Intents explícitas + ciclo de vida | `MainActivity.java:84-88` (putExtra serializável); `DetalheActivity.java:40-47` (null-check, não crasha); rotação preserva dados (`onSaveInstanceState`) |
+| RecyclerView + recursos nativos | `AgendamentoAdapter.java:22` (ListAdapter + ViewHolder); `CadastroActivity.java:82` (MaterialDatePicker) |
 
-**Fale:** "Não usamos RelativeLayout nem LinearLayout como raiz; tudo é ConstraintLayout ancorado com constraints, então a tela se adapta a qualquer tamanho."
+**Fale:** "Nenhum findViewById — o View Binding gera as classes e quebra o build se um ID mudar, o que evita crash."
 
-## 2. Boas Práticas em Java (View Binding + Lambda)
+### 4. Fechamento — estado atual e próximos passos (1 min) — Integrante 1
 
-| O que mostrar | Onde está |
-|---|---|
-| View Binding habilitado | `app/build.gradle:22` (`buildFeatures { viewBinding true }`) |
-| Nenhum `findViewById` no projeto | rodar: `rg findViewById app/src` → **0 ocorrências** |
-| ViewBinding em cada Activity | `LoginActivity.java:21`, `MainActivity.java:33`, `CadastroActivity.java:46`, `DetalheActivity.java:36` |
-| Listeners com Lambda | `LoginActivity.java:31`, `MainActivity.java:48`, `CadastroActivity.java:65-68`, `DetalheActivity.java:56-57`, `AgendamentoAdapter.java:74` |
-| Callback assíncrono também com lambda | `AgendamentoRepository.java:66-79` (autenticar/contar/inserir/atualizar) |
-
-**Fale:** "Binding gera a classe automaticamente; se o ID mudar, o build quebra no lugar errado — previne crash de `findViewById` nulo."
-
-## 3. Navegação e Estabilidade (Intents + ciclo de vida)
-
-| O que mostrar | Onde está |
-|---|---|
-| Intent explícita (Main → Detalhe) | `MainActivity.java:84-88` |
-| Tráfego seguro de dados via `Serializable` + null-check | `DetalheActivity.java:40-47` (se faltar extra → fecha com aviso, não crasha) |
-| Rotação preserva o estado | `onSaveInstanceState` em `DetalheActivity.java:61-64` e `CadastroActivity.java:72-76` |
-| Datas/horas escolhidas sobrevivem à rotação | `CadastroActivity.java` (arestas/CHAVE_*:13-17) |
-| LiveData (lifecycle) com Room | `AgendamentoDao.java:25` (`LiveData<List<Agendamento>>`), observe em `MainActivity.java:59` |
-
-**Fale:** "Usamos Intent explícita com putExtra/getSerializableExtra com checagem de null; e onSaveInstanceState pra não perder os dados na rotação."
-
-## 4. Listagens e Recursos Nativos
-
-| O que mostrar | Onde está |
-|---|---|
-| RecyclerView + ViewHolder | `MainActivity.java:52-53` (adapter+layout), `AgendamentoAdapter.java:22` (ListAdapter), ViewHolder:103 |
-| DiffUtil (lista performática) | `AgendamentoAdapter.java:24-39` |
-| MaterialDatePicker (data) | `CadastroActivity.java:82` |
-| MaterialTimePicker (hora) | `CadastroActivity.java:100` |
-
-**Fale:** "RecyclerView reaproveita as views (ViewHolder); a busca filtra a lista em `MainActivity.aplicarFiltro()` e atualiza o estado vazio."
+**Fale:** "Entregamos a N1 com navegação completa, autenticação de dois perfis, cadastro e gestão de agendamentos com persistência local e as três regras de negócio verificáveis. Para a N2 planejamos: novas telas (perfil, histórico), cadastro de usuários, visão consolidada e integração com serviço remoto."
 
 ---
 
-## Regras de negócio (3) pra demonstrar
-1. **Conflito:** agendar 2 clientes no mesmo dia/hora → `erro_conflito` (`RegrasNegocio.java:48`).
-2. **Antecedência mínima de 1h:** `RegrasNegocio.java:41` (`ANTECEDENCIA_MINIMA_MS`).
-3. **Cancelamento ≤2h antes (cliente)** / dono cancela qualquer hora: `RegrasNegocio.java:54` — demo: logar como `ana`, tentar cancelar um agendamento para daqui a 30 min → bloqueado; logar como `carlos` → cancela.
+## Checklist rápido antes de gravar/apresentar
 
-## Estados de interface (R10)
-- Lista vazia / busca sem resultado → TextView `textListaVazia` (`activity_main.xml:33`).
-- Agendamento vencido fica vermelho ("ATRASADO") → `AgendamentoAdapter.pintarStatus()`:78.
+- [ ] Emulador aberto com o app instalado (`gradlew installDebug`) e logado como `ana`.
+- [ ] Aba do navegador com o protótipo: `docs/prototipo/barberagenda-prototipo.html`.
+- [ ] Ter pelo menos 1 agendamento futuro (≥3h) para demonstrar cancelamento da cliente.
+- [ ] Ter 1 agendamento criado para demonstrar o conflito de horário.
+- [ ] Android Studio aberto no projeto para o momento do código.
+- [ ] Ensaiar: cada integrante fala seu bloco — a arguição é individual.
 
----
+## Regras de negócio para demonstrar (se perguntarem)
 
-## Roteiro de apresentação (sugestão, 20 min)
-1. **3 min — Contexto:** problema (marcar horário sem conflito), público (cliente + barbeiro).
-2. **3 min — Tela de login** (2 perfis), entrando como `ana`.
-3. **6 min — Demonstração:** criar agendamento (DatePicker + TimePicker) → ver na lista → abrir detalhe → tentar conflito (falha) → mostrar regra de cancelamento.
-4. **4 min — Código vivo:** mostre os 4 pontos acima no Android Studio (busque `findViewById` = 0).
-5. **4 min — Encerramento:** arquitetura em camadas (data/negocio/ui), Room + LiveData, próximos passos (backend, notificação).
+1. **Conflito** — mesmo dia/hora já ocupado → `erro_conflito` (`RegrasNegocio.java:48`).
+2. **Antecedência mínima 1h** — `RegrasNegocio.java:41`.
+3. **Cancelamento** — cliente até 2h antes; dono a qualquer hora → `RegrasNegocio.java:54`.
 
-## Lembrete importante
-O documento exige declaração de uso de IA no relatório final e domínio do código na arguição ("a impossibilidade de explicar decisões caracteriza ausência de autoria"). Leia bem este guia antes da apresentação.
+> **Nota:** o professor avaliará domínio do código na arguição — cada integrante deve saber explicar o trecho que implementou.

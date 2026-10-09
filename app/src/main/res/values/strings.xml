@@ -4,6 +4,8 @@
 
     <string name="tela_agenda">Agenda</string>
     <string name="tela_novo_agendamento">Novo agendamento</string>
+    <string name="titulo_agenda">Agenda</string>
+    <string name="titulo_novo_agendamento">Novo agendamento</string>
     <string name="tela_detalhe">Detalhe do agendamento</string>
 
     <string name="campo_login">Login</string>

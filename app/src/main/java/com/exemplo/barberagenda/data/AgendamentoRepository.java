@@ -46,29 +46,49 @@ public class AgendamentoRepository {
 
     public void autenticar(String login, String senha, AuthCallback callback) {
         io.execute(() -> {
-            Usuario usuario = usuarioDao.autenticar(login, senha);
-            principal.post(() -> callback.aoAutenticar(usuario));
+            Usuario usuario;
+            try {
+                usuario = usuarioDao.autenticar(login, senha);
+            } catch (Exception e) {
+                usuario = null;
+            }
+            final Usuario resultado = usuario;
+            principal.post(() -> callback.aoAutenticar(resultado));
         });
     }
 
     public void contarNoMesmoHorario(long dataHora, long idIgnorado, QuantidadeCallback callback) {
         io.execute(() -> {
-            int quantidade = agendamentoDao.contarNoMesmoHorario(dataHora, idIgnorado);
-            principal.post(() -> callback.aoContar(quantidade));
+            int quantidade = 0;
+            try {
+                quantidade = agendamentoDao.contarNoMesmoHorario(dataHora, idIgnorado);
+            } catch (Exception e) {
+                quantidade = 0;
+            }
+            final int resultado = quantidade;
+            principal.post(() -> callback.aoContar(resultado));
         });
     }
 
     public void inserir(Agendamento agendamento, AcaoCallback callback) {
         io.execute(() -> {
-            agendamentoDao.inserir(agendamento);
-            principal.post(() -> callback.aoConcluir(null));
+            try {
+                agendamentoDao.inserir(agendamento);
+                principal.post(() -> callback.aoConcluir(null));
+            } catch (Exception e) {
+                principal.post(() -> callback.aoConcluir(e.getMessage()));
+            }
         });
     }
 
     public void atualizar(Agendamento agendamento, AcaoCallback callback) {
         io.execute(() -> {
-            agendamentoDao.atualizar(agendamento);
-            principal.post(() -> callback.aoConcluir(null));
+            try {
+                agendamentoDao.atualizar(agendamento);
+                principal.post(() -> callback.aoConcluir(null));
+            } catch (Exception e) {
+                principal.post(() -> callback.aoConcluir(e.getMessage()));
+            }
         });
     }
 }
